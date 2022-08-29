@@ -7,12 +7,17 @@ on:
   workflow_dispatch:
     inputs:
         publish:
-          description: 'Publish on GitHub'
+          description: 'Publish on GitHub.'
           required: true
           type: boolean
           default: true
         release:
-          description: 'Release Build (removes -SNAPSHOT from version)'
+          description: 'Release Build (removes -SNAPSHOT from source version).'
+          required: true
+          type: boolean
+          default: false
+        useGitRefAsGithubVersion:
+          description: 'Use the Git ref field as GitHub version, e.g. if you build a release tag. If false, the GitHub version is derived from the JMC source version.'
           required: true
           type: boolean
           default: false
@@ -22,7 +27,7 @@ on:
           type: boolean
           default: false
         skipTests:
-          description: 'Skip testing'
+          description: 'Skip testing.'
           required: true
           type: boolean
           default: false
@@ -61,7 +66,11 @@ jobs:
           echo JMC version: $JMC_VERSION
           echo "::set-output name=jmcVersion::$(echo $JMC_VERSION)"
 
-          RELEASE_TAG=${JMC_VERSION}-sap
+          if [[ '${{ github.event.inputs.useGitRefAsGithubVersion || false }}' == true ]]; then
+            RELEASE_TAG=${{ github.event.inputs.gitRef }}
+          else
+            RELEASE_TAG=${JMC_VERSION}-sap
+          fi
           echo GitHub Release Tag: $RELEASE_TAG
           echo "::set-output name=githubRelease::$(echo $RELEASE_TAG)"
 
