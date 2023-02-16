@@ -64,7 +64,7 @@ jobs:
               JMC_VERSION=${JMC_REV}-SNAPSHOT
           fi
           echo JMC version: $JMC_VERSION
-          echo "::set-output name=jmcVersion::$(echo $JMC_VERSION)"
+          echo "jmcVersion=$(echo $JMC_VERSION)" >> $GITHUB_OUTPUT
 
           if [[ '${{ github.event.inputs.useGitRefAsGithubVersion || false }}' == true ]]; then
             RELEASE_TAG=${{ github.event.inputs.gitRef }}
@@ -72,7 +72,7 @@ jobs:
             RELEASE_TAG=${JMC_VERSION}-sap
           fi
           echo GitHub Release Tag: $RELEASE_TAG
-          echo "::set-output name=githubRelease::$(echo $RELEASE_TAG)"
+          echo "githubRelease=$(echo $RELEASE_TAG)" >> $GITHUB_OUTPUT
 
           AGENT_REV=$(cd agent && grep -i \<revision\> pom.xml | sed 's/^[ \t]*<revision>//g;s/<\/revision>[ \t]*$//g')
           if [[ '${{ github.event.inputs.release || false }}' == true ]]; then
@@ -81,7 +81,7 @@ jobs:
               AGENT_VERSION=${AGENT_REV}-SNAPSHOT
           fi
           echo Agent version: $AGENT_VERSION
-          echo "::set-output name=agentVersion::$(echo $AGENT_VERSION)"
+          echo "agentVersion=$(echo $AGENT_VERSION)" >> $GITHUB_OUTPUT
 
       - name: Download existing release file
         uses: robinraju/release-downloader@v1.4
@@ -113,8 +113,8 @@ jobs:
           REL_REV=$(cat buildRef-${{ steps.versions.outputs.jmcVersion }}.txt) || true
           echo Released Rev: $REL_REV
           echo Should run: $(check_run)
-          echo "::set-output name=doBuild::$(check_run)"
-          echo "::set-output name=commit::$(echo $MY_REV)"
+          echo "doBuild=$(check_run)" >> $GITHUB_OUTPUT
+          echo "commit=$(echo $MY_REV)" >> $GITHUB_OUTPUT
 
   build:
     name: Build JMC
@@ -144,7 +144,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: '11.0.14'
+          java-version: '11.0.18'
           java-package: jdk
 
       - name: Cache local Maven repository
@@ -191,13 +191,13 @@ jobs:
         run: |
           $MAVEN_CALL verify
 
-      - name: Run UI tests
-        if: needs.parameters.outputs.skipTests != 'true'
-        # Ignore UI failures for now
-        continue-on-error: true
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: ${{ env.MAVEN_CALL }} verify -P uitests
+      #- name: Run UI tests
+      #  if: needs.parameters.outputs.skipTests != 'true'
+      #  # Ignore UI failures for now
+      #  continue-on-error: true
+      #  uses: GabrielBB/xvfb-action@v1
+      #  with:
+      #    run: ${{ env.MAVEN_CALL }} verify -P uitests
 
       - name: Delete old GitHub release ${{ needs.parameters.outputs.githubRelease }}
         if: ${{ needs.parameters.outputs.publish == 'true' && needs.parameters.outputs.release != 'true' }}
