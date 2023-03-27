@@ -202,7 +202,7 @@ jobs:
       - name: Delete old GitHub release ${{ needs.parameters.outputs.githubRelease }}
         if: ${{ needs.parameters.outputs.publish == 'true' && needs.parameters.outputs.release != 'true' }}
         continue-on-error: true
-        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        uses: dev-drprasad/delete-tag-and-release@v0.2.1
         with:
           delete_release: true
           tag_name: ${{ needs.parameters.outputs.githubRelease }}
