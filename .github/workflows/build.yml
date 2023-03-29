@@ -211,12 +211,13 @@ jobs:
 
       - name: Create/Update GitHub release ${{ needs.parameters.outputs.githubRelease }}
         if: needs.parameters.outputs.publish == 'true'
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.12.0
         with:
           tag: ${{ needs.parameters.outputs.githubRelease }}
           commit: ${{ needs.parameters.outputs.commit }}
           allowUpdates: ${{ needs.parameters.outputs.release != 'true' }}
           prerelease: ${{ needs.parameters.outputs.release != 'true' }}
+          draft: false
 
       - name: Upload buildRef-${{ needs.parameters.outputs.jmcVersion }}.txt
         if: needs.parameters.outputs.publish == 'true'
