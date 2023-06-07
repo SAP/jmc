@@ -123,7 +123,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MAVEN_OPTS: -Xmx2048m
-      MAVEN_CALL: mvn --no-transfer-progress
+      MAVEN_CALL: mvn --batch-mode --no-transfer-progress
     steps:
       - name: Summarize parameters
         run: |
@@ -144,8 +144,9 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: '11.0.18'
+          java-version: '17'
           java-package: jdk
+          mvn-toolchain-id: 'JavaSE-17'
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
