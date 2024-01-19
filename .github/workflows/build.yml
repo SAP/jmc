@@ -37,7 +37,7 @@ on:
 
 jobs:
   parameters:
-    name: Initialize Parameters and Versions
+    name: Gather Parameters
     runs-on: ubuntu-latest
     outputs:
       publish: ${{ github.event.inputs.publish || true }}
@@ -84,10 +84,11 @@ jobs:
           echo "agentVersion=$(echo $AGENT_VERSION)" >> $GITHUB_OUTPUT
 
       - name: Download existing release file
-        uses: robinraju/release-downloader@v1.4
+        uses: robinraju/release-downloader@v1
         continue-on-error: true
         with:
           tag: ${{ steps.versions.outputs.githubRelease }}
+          repository: ${{ github.repository }}
           fileName: buildRef-${{ steps.versions.outputs.jmcVersion }}.txt
 
       - name: Determine whether build is needed
@@ -116,16 +117,12 @@ jobs:
           echo "doBuild=$(check_run)" >> $GITHUB_OUTPUT
           echo "commit=$(echo $MY_REV)" >> $GITHUB_OUTPUT
 
-  build:
-    name: Build JMC
-    needs: parameters
-    if: needs.parameters.outputs.doBuild == 'true'
+  printparameters:
+    name: Print Parameters
+    needs: [parameters]
     runs-on: ubuntu-latest
-    env:
-      MAVEN_OPTS: -Xmx2048m
-      MAVEN_CALL: mvn --batch-mode --no-transfer-progress
     steps:
-      - name: Summarize parameters
+      - name: Print parameters
         run: |
           echo publish: ${{ needs.parameters.outputs.publish }}
           echo release: ${{ needs.parameters.outputs.release }}
@@ -133,8 +130,31 @@ jobs:
           echo githubRelease: ${{ needs.parameters.outputs.githubRelease }}
           echo jmcVersion: ${{ needs.parameters.outputs.jmcVersion }}
           echo agentVersion: ${{ needs.parameters.outputs.agentVersion }}
+          echo doBuild: ${{ needs.parameters.outputs.doBuild }}
           echo commit: ${{ needs.parameters.outputs.commit }}
 
+  deleteold:
+    name: Delete old Release
+    needs: parameters
+    if: ${{ needs.parameters.outputs.doBuild == 'true' && needs.parameters.outputs.publish == 'true' && needs.parameters.outputs.release != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old GitHub release ${{ needs.parameters.outputs.githubRelease }}
+        continue-on-error: true
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: ${{ needs.parameters.outputs.githubRelease }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    name: Build JMC
+    needs: [parameters, deleteold]
+    if: needs.parameters.outputs.doBuild == 'true'
+    runs-on: ubuntu-latest
+    env:
+      MAVEN_OPTS: -Xmx2048m
+      MAVEN_CALL: mvn --batch-mode --no-transfer-progress
+    steps:
       - name: Checkout JMC
         uses: actions/checkout@v3
         with:
@@ -200,25 +220,14 @@ jobs:
       #  with:
       #    run: ${{ env.MAVEN_CALL }} verify -P uitests
 
-      - name: Delete old GitHub release ${{ needs.parameters.outputs.githubRelease }}
-        if: ${{ needs.parameters.outputs.publish == 'true' && needs.parameters.outputs.release != 'true' }}
-        continue-on-error: true
-        uses: dev-drprasad/delete-tag-and-release@v0.2.1
-        with:
-          delete_release: true
-          tag_name: ${{ needs.parameters.outputs.githubRelease }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
       - name: Create/Update GitHub release ${{ needs.parameters.outputs.githubRelease }}
         if: needs.parameters.outputs.publish == 'true'
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.parameters.outputs.githubRelease }}
           commit: ${{ needs.parameters.outputs.commit }}
           allowUpdates: ${{ needs.parameters.outputs.release != 'true' }}
           prerelease: ${{ needs.parameters.outputs.release != 'true' }}
-          draft: false
 
       - name: Upload buildRef-${{ needs.parameters.outputs.jmcVersion }}.txt
         if: needs.parameters.outputs.publish == 'true'
