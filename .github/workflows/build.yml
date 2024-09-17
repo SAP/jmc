@@ -159,9 +159,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: sapmachine
-          java-version: '17'
+          java-version: |
+            17
+            21
           java-package: jdk
-          mvn-toolchain-id: 'JavaSE-17'
+          mvn-toolchain-id: |
+           JavaSE-17
+           JavaSE-21
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
