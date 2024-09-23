@@ -155,17 +155,26 @@ jobs:
         with:
           ref: ${{ needs.parameters.outputs.commit }}
 
-      - name: Set up build JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: sapmachine
-          java-version: |
-            17
-            21
+          java-version: '17'
           java-package: jdk
-          mvn-toolchain-id: |
-           JavaSE-17
-           JavaSE-21
+          mvn-toolchain-id: JavaSE-17
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: sapmachine
+          java-version: '21'
+          java-package: jdk
+          mvn-toolchain-id: JavaSE-21
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
