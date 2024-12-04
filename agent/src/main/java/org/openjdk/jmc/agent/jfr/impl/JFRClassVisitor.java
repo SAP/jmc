@@ -106,8 +106,14 @@ public class JFRClassVisitor extends ClassVisitor {
 	}
 
 	private Class<?> generateEventClass() throws Exception {
-		byte[] eventClass = JFREventClassGenerator.generateEventClass(transformDescriptor, inspectionClass);
-		return TypeUtils.defineClass(transformDescriptor.getEventClassName(), eventClass, 0, eventClass.length,
-				definingClassLoader, protectionDomain);
+		try {
+			// Might have already been defined earlier.
+			return Class.forName(TypeUtils.getCanonicalName(transformDescriptor.getEventClassName()), false,
+					definingClassLoader);
+		} catch (ClassNotFoundException e) {
+			byte[] eventClass = JFREventClassGenerator.generateEventClass(transformDescriptor, inspectionClass);
+			return TypeUtils.defineClass(transformDescriptor.getEventClassName(), eventClass, 0, eventClass.length,
+					definingClassLoader, protectionDomain);
+		}
 	}
 }
