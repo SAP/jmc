@@ -24,38 +24,60 @@
 
 package org.openjdk.jmc.agent.sap.boot.converters;
 
+import java.lang.reflect.Array;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import org.openjdk.jmc.agent.sap.boot.util.Arguments;
 import org.openjdk.jmc.agent.sap.boot.util.ArgumentsHolder;
 import org.openjdk.jmc.agent.sap.boot.util.Command;
-import org.openjdk.jmc.agent.sap.boot.util.Arguments;
 import org.openjdk.jmc.agent.sap.boot.util.LoggingUtils;
 
 public class GenericLogger {
 
 	public static final String GENERIC_COMMAND_PREFIX = "logGeneric";
-	public static final int MAX_FORMATS = 5;
+	public static final int MAX_FORMATS = 6;
 	public static final Command[] commands = new Command[MAX_FORMATS];
 
+	private static final int DEFAULT_MAX_PRINT_LENGTH = 256;
+	private static final int DEFAULT_MAX_ARRAY_PRINT_LENGTH = 5;
 	private static final String ONCE_PER_STACK = "oncePerStack";
 	private static final String FORMAT = "format";
+	private static final String PRINT_COLLECTION_CONTENT = "printCollectionContent";
+	private static final String MAX_PRINT_LENGTH = "maxPrintLength";
+	private static final String MAX_ARRAY_PRINT_LENGTH = "maxArrayPrintLength";
 	private static final String MAX_LONG = "maxLongValue";
 	private static final String MIN_LONG = "minLongValue";
 	private static final String MAX_DOUBLE = "maxDoubleValue";
 	private static final String MIN_DOUBLE = "minDoubleValue";
-	private static final String EQUALS = "equalsValue";
+	private static final String MIN_LENGTH = "valueMinLength";
+	private static final String MAX_LENGTH = "valueMaxLength";
+	private static final String EQUALS = "valueEquals";
 	private static final String STARTS_WITH = "valueStartsWith";
-	private static final String ENDS_WITH = "valueStartsWith";
+	private static final String ENDS_WITH = "valueEndsWith";
 	private static final String CONTAINS = "valueContains";
 	private static final String MATCHES_REGEXP = "valueMatchesRegexp";
 	private static final String INSTANCEOF = "valueInstanceof";
+	private static final String IS_TYPE = "valueIsType";
+	private static final String NOT_EQUALS = "valueNotEquals";
+	private static final String NOT_STARTS_WITH = "valueNotStartsWith";
+	private static final String NOT_ENDS_WITH = "valueNotEndsWith";
+	private static final String NOT_CONTAINS = "valueNotContains";
+	private static final String NOT_MATCHES_REGEXP = "valueNotMatchesRegexp";
+	private static final String NOT_INSTANCEOF = "valueNotInstanceof";
+	private static final String IS_NOT_TYPE = "valueIsNotType";
 	private static final ArrayList<ArrayList<ThreadLocal<Object>>> locals = new ArrayList<>();
 	private static final int[] parameterIndices = new int[MAX_FORMATS];
-	private static final String[] formats = new String[MAX_FORMATS];
 	private static final HashSet<SeenStack> seenStacks = new HashSet<>();
 	private static final ArgumentsHolder[] argsHolder = new ArgumentsHolder[MAX_FORMATS];
 
@@ -64,13 +86,195 @@ public class GenericLogger {
 			commands[i] = new Command(GENERIC_COMMAND_PREFIX + (i + 1),
 					"Used to specify the logging options for generic logger " + (i + 1), FORMAT,
 					"Used to specify the output of the generic logging format " + (i + 1) + ".", ONCE_PER_STACK,
-					"If true we only log once per unique call stack.");
+					"If true we only log once per unique call stack.", MAX_PRINT_LENGTH,
+					"The maximum number of characters to print.", MAX_ARRAY_PRINT_LENGTH,
+					"The maximum number of elements in an array to print.", PRINT_COLLECTION_CONTENT,
+					"If true we dump part of the contents of a supported Java collection type. "
+							+ "This is disabled by default because of potential multi-threading issues.");
 			LoggingUtils.addOptionsWithStack(commands[i]);
 			addFilterOptions(commands[i]);
 			argsHolder[i] = commands[i].getArguments();
 		}
 	}
 
+	private static StringBuilder sanitize(CharSequence cs) {
+		StringBuilder sb = new StringBuilder(cs.length());
+
+		for (int i = 0; i < cs.length(); ++i) {
+			char c = cs.charAt(i);
+
+			switch (c) {
+			case '\n':
+				sb.append("\\n");
+				break;
+
+			case '\t':
+				sb.append("\\t");
+				break;
+
+			case '"':
+				sb.append("\\\"");
+				break;
+
+			case '\'':
+				sb.append("\\'");
+				break;
+
+			case '\\':
+				sb.append("\\\\");
+				break;
+
+			default:
+				if (c < 32 || c >= 127) {
+					sb.append('.');
+				} else {
+					sb.append(c);
+				}
+			}
+		}
+
+		return sb;
+	}
+
+	private static StringBuilder convertToString(int format, boolean allowInspection, Object o) {
+		if (o == null) {
+			return new StringBuilder("null");
+		}
+
+		int maxPrintLen = argsHolder[format].get().getInt(MAX_PRINT_LENGTH, DEFAULT_MAX_PRINT_LENGTH);
+		boolean isCollection = o instanceof Collection<?> || o instanceof Map<?, ?>;
+
+		if (o.getClass().isArray() || (isCollection && allowInspection)) {
+			int maxArrayLen = argsHolder[format].get().getInt(MAX_ARRAY_PRINT_LENGTH, DEFAULT_MAX_ARRAY_PRINT_LENGTH);
+			int len;
+			Iterator<?> it = null;
+
+			StringBuilder sb = new StringBuilder("{");
+			boolean success = true;
+
+			if (o.getClass().isArray()) {
+				len = Array.getLength(o);
+			} else if (o instanceof Map<?, ?>) {
+				len = ((Map<?, ?>) o).size();
+				it = ((Map<?, ?>) o).entrySet().iterator();
+			} else {
+				len = ((Collection<?>) o).size();
+				it = ((Collection<?>) o).iterator();
+			}
+
+			for (int i = 0; i < len && i < maxArrayLen; ++i) {
+				if (i > 0) {
+					sb.append(", ");
+				}
+
+				if (o instanceof Collection<?>) {
+					if (it.hasNext()) {
+						try {
+							Object v = it.next();
+							sb.append(convertToString(format, allowInspection, v));
+						} catch (ConcurrentModificationException | NoSuchElementException e) {
+							success = false;
+							break;
+						}
+					}
+				} else if (o instanceof Map<?, ?>) {
+					if (it.hasNext()) {
+						try {
+							Map.Entry<?, ?> v = (Map.Entry<?, ?>) it.next();
+							sb.append(convertToString(format, allowInspection, v.getKey()) + ": "
+									+ convertToString(format, allowInspection, v.getValue()));
+						} catch (ConcurrentModificationException | NoSuchElementException e) {
+							success = false;
+							break;
+						}
+					}
+				} else if (o instanceof boolean[]) {
+					sb.append(Boolean.toString(((boolean[]) o)[i]));
+				} else if (o instanceof byte[]) {
+					sb.append(Byte.toString(((byte[]) o)[i]));
+				} else if (o instanceof short[]) {
+					sb.append(Short.toString(((short[]) o)[i]));
+				} else if (o instanceof char[]) {
+					sb.append("'" + sanitize(Character.toString(((char[]) o)[i])) + "'");
+				} else if (o instanceof int[]) {
+					sb.append(Integer.toString(((int[]) o)[i]));
+				} else if (o instanceof long[]) {
+					sb.append(Long.toString(((long[]) o)[i]));
+				} else if (o instanceof float[]) {
+					sb.append(Float.toString(((float[]) o)[i]));
+				} else if (o instanceof double[]) {
+					sb.append(Double.toString(((double[]) o)[i]));
+				} else {
+					Class<?> compType = o.getClass().getComponentType();
+					Object oi = ((Object[]) o)[i];
+
+					if (oi == null) {
+						sb.append("null");
+					} else if (oi.getClass().isArray()) {
+						int depth = 0;
+						compType = oi.getClass().getComponentType();
+
+						while (compType.isArray()) {
+							depth += 1;
+							compType = compType.getComponentType();
+						}
+
+						sb.append(compType.getName() + "[" + Array.getLength(oi) + "]");
+
+						for (int j = 0; j < depth; ++j) {
+							sb.append("[]");
+						}
+					} else {
+						sb.append(convertToString(format, allowInspection, ((Object[]) o)[i]));
+					}
+				}
+			}
+
+			if (len > maxArrayLen) {
+				sb.append(", " + (len - maxArrayLen) + " skipped ...");
+			}
+
+			sb.append("}");
+
+			if (success) {
+				return sb;
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		if (isCollection) {
+			if (o instanceof Collection<?>) {
+				sb.append(o.getClass().getName() + "(size " + ((Collection<?>) o).size() + ")");
+
+				return sb;
+			}
+
+			if (o instanceof Map<?, ?>) {
+				sb.append(o.getClass().getName() + "(size " + ((Map<?, ?>) o).size() + ")");
+
+				return sb;
+			}
+		}
+
+		if (o instanceof CharSequence) {
+			StringBuilder cs = sanitize(new StringBuilder((CharSequence) o));
+			sb = new StringBuilder(cs.length() + 2);
+			sb.append('"');
+			sb.append(cs);
+			sb.append('"');
+		} else {
+			sb = new StringBuilder(sanitize(o.toString()));
+
+			if (sb.length() > maxPrintLen) {
+				return new StringBuilder(sb.substring(0, maxPrintLen));
+			}
+		}
+
+		return sb;
+	}
+
+	@SuppressWarnings("deprecation")
 	private static void logValue(Object value, int index, boolean isLast) {
 		int paramenterIndex;
 		ArrayList<ThreadLocal<Object>> params;
@@ -109,30 +313,17 @@ public class GenericLogger {
 				}
 			}
 
-			String format;
 			Object[] values = new Object[paramenterIndex + 1];
 
 			for (int i = 0; i <= paramenterIndex; ++i) {
 				values[i] = params.get(i).get();
-				params.get(i).remove();
-			}
 
-			synchronized (formats) {
-				format = formats[index];
-
-				if (format == null) {
-					format = args.getString("format", null);
-
-					if (format == null) {
-						format = "Values for generic logger " + (index + 1) + ":";
-
-						for (int i = 0; i < values.length; ++i) {
-							format += " %" + (i + 1) + "$s";
-						}
-					}
-
-					formats[index] = format;
+				// Make sure we have a standard format for dates.
+				if (values[i] instanceof Date) {
+					values[i] = ((Date) values[i]).toGMTString();
 				}
+
+				params.get(i).remove();
 			}
 
 			@SuppressWarnings("unchecked")
@@ -156,7 +347,14 @@ public class GenericLogger {
 				}
 			}
 
-			LoggingUtils.logWithFormat(args, format + "\n", values);
+			StringBuilder sb = new StringBuilder("Values for generic logger " + (index + 1) + ":");
+
+			for (Object o : values) {
+				sb.append(' ');
+				sb.append(convertToString(index, args.getBoolean(PRINT_COLLECTION_CONTENT, false), o));
+			}
+
+			LoggingUtils.log(args, sb.toString());
 		}
 	}
 
@@ -650,6 +848,96 @@ public class GenericLogger {
 		return stringify(v);
 	}
 
+	public static boolean logFormat6(boolean v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static byte logFormat6(byte v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static short logFormat6(short v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static char logFormat6(char v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static int logFormat6(int v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static long logFormat6(long v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static float logFormat6(float v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static double logFormat6(double v) {
+		log(v, 5, false);
+		return v;
+	}
+
+	public static String logFormat6(Object v) {
+		log(v, 5, false);
+		return stringify(v);
+	}
+
+	public static boolean logLastFormat6(boolean v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static byte logLastFormat6(byte v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static short logLastFormat6(short v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static char logLastFormat6(char v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static int logLastFormat6(int v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static long logLastFormat6(long v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static float logLastFormat6(float v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static double logLastFormat6(double v) {
+		log(v, 5, true);
+		return v;
+	}
+
+	public static String logLastFormat6(Object v) {
+		log(v, 5, true);
+		return stringify(v);
+	}
+
 	private static void addFilterOptions(Command cmd) {
 		cmd.addOption(suffixValue(MAX_LONG, "<idx>"), "Traces only if value <idx> has the given maximum long value.");
 		cmd.addOption(suffixValue(MIN_LONG, "<idx>"), "Traces only if value <idx> has the given minimum long value.");
@@ -657,7 +945,36 @@ public class GenericLogger {
 				"Traces only if value <idx> has the given maximum double value.");
 		cmd.addOption(suffixValue(MIN_DOUBLE, "<idx>"),
 				"Traces only if value <idx> has the given minimum double value.");
+		cmd.addOption(suffixValue(MIN_LENGTH, "<idx>"),
+				"Traces only if array or similar type has the given minimum length.");
+		cmd.addOption(suffixValue(MAX_LENGTH, "<idx>"),
+				"Traces only if array or similar type has the given minimum length.");
 		cmd.addOption(suffixValue(EQUALS, "<idx>"), "Traces only if value <idx> equals the given value.");
+		cmd.addOption(suffixValue(CONTAINS, "<idx>"),
+				"Traces only if the string representation of value <idx> contains the given string.");
+		cmd.addOption(suffixValue(STARTS_WITH, "<idx>"),
+				"Traces only if the string representation of value <idx> starts with the given string.");
+		cmd.addOption(suffixValue(ENDS_WITH, "<idx>"),
+				"Traces only if the string representation of value <idx> ends with the given string.");
+		cmd.addOption(suffixValue(MATCHES_REGEXP, "<idx>"),
+				"Traces only if the string representation of value <idx> matches the given regexp.");
+		cmd.addOption(suffixValue(INSTANCEOF, "<idx>"),
+				"Traces only if value <idx> is a class and is an instance of the given type.");
+		cmd.addOption(suffixValue(IS_TYPE, "<idx>"),
+				"Traces only if the value <idx> is of the given type (null, array, primitive_array or object_array).");
+		cmd.addOption(suffixValue(NOT_EQUALS, "<idx>"), "Traces only if value <idx> does NOT equals the given value.");
+		cmd.addOption(suffixValue(NOT_CONTAINS, "<idx>"),
+				"Traces only if the string representation of value <idx> does NOT contains the given string.");
+		cmd.addOption(suffixValue(NOT_STARTS_WITH, "<idx>"),
+				"Traces only if the string representation of value <idx> does NOT starts with the given string.");
+		cmd.addOption(suffixValue(NOT_ENDS_WITH, "<idx>"),
+				"Traces only if the string representation of value <idx> does NOT ends with the given string.");
+		cmd.addOption(suffixValue(NOT_MATCHES_REGEXP, "<idx>"),
+				"Traces only if the string representation of value <idx> does NOT matches the given regexp.");
+		cmd.addOption(suffixValue(NOT_INSTANCEOF, "<idx>"),
+				"Traces only if value <idx> is a class and is NOT an instance of the given type.");
+		cmd.addOption(suffixValue(IS_NOT_TYPE, "<idx>"),
+				"Traces only if the value <idx> is not of the given type (null, array, primitive_array or object_array).");
 	}
 
 	private static String suffixValue(String option, String suffix) {
@@ -690,12 +1007,22 @@ public class GenericLogger {
 		String maxDouble = getValueOption(MAX_DOUBLE, idx);
 		String minLong = getValueOption(MIN_LONG, idx);
 		String minDouble = getValueOption(MIN_DOUBLE, idx);
+		String minLength = getValueOption(MIN_LENGTH, idx);
+		String maxLength = getValueOption(MAX_LENGTH, idx);
 		String equals = getValueOption(EQUALS, idx);
 		String startsWith = getValueOption(STARTS_WITH, idx);
 		String endsWith = getValueOption(ENDS_WITH, idx);
 		String contains = getValueOption(CONTAINS, idx);
 		String matchesRegexp = getValueOption(MATCHES_REGEXP, idx);
 		String instanceOf = getValueOption(INSTANCEOF, idx);
+		String isType = getValueOption(IS_TYPE, idx);
+		String notEquals = getValueOption(NOT_EQUALS, idx);
+		String notStartsWith = getValueOption(NOT_STARTS_WITH, idx);
+		String notEndsWith = getValueOption(NOT_ENDS_WITH, idx);
+		String notContains = getValueOption(NOT_CONTAINS, idx);
+		String notMatchesRegexp = getValueOption(NOT_MATCHES_REGEXP, idx);
+		String notInstanceOf = getValueOption(NOT_INSTANCEOF, idx);
+		String isNotType = getValueOption(IS_NOT_TYPE, idx);
 
 		if (args.hasOption(maxLong)) {
 			result = addPredicate(result, new MaxLongValueFilter(args.getLong(maxLong, 0)));
@@ -706,11 +1033,19 @@ public class GenericLogger {
 		}
 
 		if (args.hasOption(minLong)) {
-			result = addPredicate(result, new MinLongValueFilter(args.getLong(minDouble, 0)));
+			result = addPredicate(result, new MinLongValueFilter(args.getLong(minLong, 0)));
 		}
 
 		if (args.hasOption(minDouble)) {
 			result = addPredicate(result, new MinDoubleValueFilter(args.getDouble(minDouble, 0)));
+		}
+
+		if (args.hasOption(minLength)) {
+			result = addPredicate(result, new MinLengthFilter(args.getInt(minLength, 0)));
+		}
+
+		if (args.hasOption(maxLength)) {
+			result = addPredicate(result, new MaxLengthFilter(args.getInt(maxLength, 0)));
 		}
 
 		if (args.hasOption(equals)) {
@@ -726,18 +1061,101 @@ public class GenericLogger {
 		}
 
 		if (args.hasOption(contains)) {
-			result = addPredicate(result, new ContainsValueFilter(args.getString(contains, "")));
+			for (String str : args.getStrings(contains)) {
+				result = addPredicate(result, new ContainsValueFilter(str));
+			}
 		}
 
 		if (args.hasOption(matchesRegexp)) {
-			result = addPredicate(result, new MatchesRegexpValueFilter(args.getString(matchesRegexp, "")));
+			for (String str : args.getStrings(matchesRegexp)) {
+				result = addPredicate(result, new MatchesRegexpValueFilter(str));
+			}
 		}
 
 		if (args.hasOption(instanceOf)) {
-			result = addPredicate(result, new InstanceofValueFilter(args.getString(instanceOf, "")));
+			for (String str : args.getStrings(instanceOf)) {
+				result = addPredicate(result, new InstanceofValueFilter(str));
+			}
+		}
+
+		if (args.hasOption(isType)) {
+			for (String str : args.getStrings(isType)) {
+				result = addPredicate(result, new IsTypeFilter(str));
+			}
+		}
+
+		if (args.hasOption(notEquals)) {
+			for (String str : args.getStrings(notEquals)) {
+				result = addPredicate(result, new EqualsValueFilter(str).negate());
+			}
+		}
+
+		if (args.hasOption(notStartsWith)) {
+			for (String str : args.getStrings(notStartsWith)) {
+				result = addPredicate(result, new StartsWithValueFilter(str).negate());
+			}
+		}
+
+		if (args.hasOption(notEndsWith)) {
+			for (String str : args.getStrings(notEndsWith)) {
+				result = addPredicate(result, new EndsWithValueFilter(str).negate());
+			}
+		}
+
+		if (args.hasOption(notContains)) {
+			for (String str : args.getStrings(notContains)) {
+				result = addPredicate(result, new ContainsValueFilter(str).negate());
+			}
+		}
+
+		if (args.hasOption(notMatchesRegexp)) {
+			for (String str : args.getStrings(notMatchesRegexp)) {
+				result = addPredicate(result, new MatchesRegexpValueFilter(str).negate());
+			}
+		}
+
+		if (args.hasOption(notInstanceOf)) {
+			for (String str : args.getStrings(notInstanceOf)) {
+				result = addPredicate(result, new InstanceofValueFilter(str).negate());
+			}
+		}
+
+		if (args.hasOption(isNotType)) {
+			for (String str : args.getStrings(isNotType)) {
+				result = addPredicate(result, new IsTypeFilter(str).negate());
+			}
 		}
 
 		return result;
+	}
+
+	private static final class IsTypeFilter implements Predicate<Object> {
+		private final String type;
+
+		public IsTypeFilter(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public boolean test(Object t) {
+			if (t == null) {
+				return "null".equals(type);
+			}
+
+			if (t.getClass().isArray()) {
+				if ("array".equals(type)) {
+					return true;
+				}
+
+				if (t.getClass().getComponentType().isPrimitive()) {
+					return "primitive_array".equals(type);
+				}
+
+				return "object_array".equals(type);
+			}
+
+			return false;
+		}
 	}
 
 	private static final class MaxLongValueFilter implements Predicate<Object> {
@@ -750,17 +1168,21 @@ public class GenericLogger {
 
 		@Override
 		public boolean test(Object t) {
+			// Handle double and float separately, since we want to avoid treating 0.3 <= 0.
+			if (t instanceof Double) {
+				return ((Double) t).doubleValue() <= max;
+			}
+
+			if (t instanceof Float) {
+				return ((Float) t).floatValue() <= max;
+			}
+
 			if (t instanceof Number) {
-				// Handle double and float separately, since we want to avoid treating 0.3 <= 0.
-				if (t instanceof Double) {
-					return ((Double) t).doubleValue() <= max;
-				}
-
-				if (t instanceof Float) {
-					return ((Float) t).floatValue() <= max;
-				}
-
 				return ((Number) t).longValue() <= max;
+			}
+
+			if (t instanceof Character) {
+				return ((Character) t).charValue() <= max;
 			}
 
 			return false;
@@ -779,6 +1201,10 @@ public class GenericLogger {
 		public boolean test(Object t) {
 			if (t instanceof Number) {
 				return ((Number) t).doubleValue() <= max;
+			}
+
+			if (t instanceof Character) {
+				return ((Character) t).charValue() <= max;
 			}
 
 			return false;
@@ -808,6 +1234,10 @@ public class GenericLogger {
 				return ((Number) t).longValue() >= min;
 			}
 
+			if (t instanceof Character) {
+				return ((Character) t).charValue() >= min;
+			}
+
 			return false;
 		}
 	}
@@ -826,7 +1256,76 @@ public class GenericLogger {
 				return ((Number) t).doubleValue() >= min;
 			}
 
+			if (t instanceof Character) {
+				return ((Character) t).charValue() >= min;
+			}
+
 			return false;
+		}
+	}
+
+	private static int getLength(Object o) {
+		if (o == null) {
+			return -1;
+		}
+
+		if (o.getClass().isArray()) {
+			return Array.getLength(o);
+		}
+
+		// Support some of the common types with lengths.
+		if (o instanceof CharSequence) {
+			return ((CharSequence) o).length();
+		}
+
+		if (o instanceof Collection<?>) {
+			return ((Collection<?>) o).size();
+		}
+
+		if (o instanceof Map<?, ?>) {
+			return ((Map<?, ?>) o).size();
+		}
+
+		return -1;
+	}
+
+	private static final class MinLengthFilter implements Predicate<Object> {
+
+		private final int min;
+
+		MinLengthFilter(int min) {
+			this.min = min;
+		}
+
+		@Override
+		public boolean test(Object t) {
+			int len = getLength(t);
+
+			if (len < 0) {
+				return false;
+			}
+
+			return len >= min;
+		}
+	}
+
+	private static final class MaxLengthFilter implements Predicate<Object> {
+
+		private final int max;
+
+		MaxLengthFilter(int max) {
+			this.max = max;
+		}
+
+		@Override
+		public boolean test(Object t) {
+			int len = getLength(t);
+
+			if (len < 0) {
+				return false;
+			}
+
+			return len <= max;
 		}
 	}
 
@@ -840,6 +1339,10 @@ public class GenericLogger {
 
 		@Override
 		public boolean test(Object t) {
+			if (t == null) {
+				return false;
+			}
+
 			try {
 				if (t instanceof Number) {
 					if ((t instanceof Double) || (t instanceof Float)) {
@@ -851,10 +1354,8 @@ public class GenericLogger {
 					return val.equals((CharSequence) t);
 				} else if (t instanceof Class) {
 					return val.equals(((Class<?>) t).getName());
-				} else if (t != null) {
-					return val.equals(t.toString());
 				} else {
-					return val.equals("null");
+					return val.equals(t.toString());
 				}
 			} catch (NumberFormatException e) {
 				// Ignore and return false.
@@ -877,6 +1378,10 @@ public class GenericLogger {
 			if (t != null) {
 				if (t instanceof Class) {
 					return ((Class<?>) t).getName().startsWith(prefix);
+				}
+
+				if (t instanceof CharBuffer) {
+					return t.toString().startsWith(prefix);
 				}
 
 				return t.toString().startsWith(prefix);
@@ -987,7 +1492,13 @@ public class GenericLogger {
 		@Override
 		public boolean test(Object t) {
 			if (t instanceof Class) {
+				if ("java.lang.Class".equals(clazz)) {
+					return true;
+				}
+
 				return instanceofImpl((Class<?>) t);
+			} else if (t != null) {
+				return instanceofImpl(t.getClass());
 			}
 
 			return false;

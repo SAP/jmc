@@ -34,7 +34,8 @@ public class Commands {
 
 	public static final Command[] commands = new Command[] {LocaleChangeLogger.command, SystemPropChangeLogger.command,
 			TimeZoneChangeLogger.command, UnsafeMemoryAllocationLogger.command, GenericLogger.commands[0],
-			GenericLogger.commands[1], GenericLogger.commands[2], GenericLogger.commands[3], GenericLogger.commands[4]};
+			GenericLogger.commands[1], GenericLogger.commands[2], GenericLogger.commands[3], GenericLogger.commands[4],
+			GenericLogger.commands[5]};
 
 	public static void printAllCommands() {
 		System.out.println("The following commands are suppored:");

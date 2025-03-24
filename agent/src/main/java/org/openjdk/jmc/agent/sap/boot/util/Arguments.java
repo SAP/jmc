@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 public class Arguments {
 
-	private final HashMap<String, String> args;
+	private final HashMap<String, String[]> args;
 	private final Command command;
 	private volatile Object customData;
 
@@ -65,15 +65,34 @@ public class Arguments {
 
 	public String getString(String option, String defaultResult) {
 		if (args.containsKey(option)) {
-			return args.get(option);
+			String[] opts = args.get(option);
+
+			if (opts.length == 0) {
+				return null;
+			}
+
+			if (opts.length == 1) {
+				return opts[0];
+			}
+
+			throw new RuntimeException(
+					"Found " + opts.length + " values for option '" + option + "'. Expected only one.");
 		}
 
 		return defaultResult;
 	}
 
+	public String[] getStrings(String option) {
+		if (args.containsKey(option)) {
+			return args.get(option);
+		}
+
+		return new String[0];
+	}
+
 	public boolean getBoolean(String option, boolean defaultResult) {
 		if (args.containsKey(option)) {
-			return Boolean.parseBoolean(args.get(option));
+			return Boolean.parseBoolean(getString(option, ""));
 		}
 
 		return defaultResult;
@@ -81,7 +100,7 @@ public class Arguments {
 
 	public Pattern getPattern(String option, Pattern defaultResult) {
 		if (args.containsKey(option)) {
-			return Pattern.compile(args.get(option));
+			return Pattern.compile(getString(option, ""));
 		}
 
 		return defaultResult;
@@ -90,7 +109,7 @@ public class Arguments {
 	public int getInt(String option, int defaultRersult) {
 		if (args.containsKey(option)) {
 			try {
-				return Integer.parseInt(args.get(option));
+				return Integer.parseInt(getString(option, ""));
 			} catch (NumberFormatException e) {
 				reportOptionError(option, "Could not parse integer value");
 				System.exit(1);
@@ -113,7 +132,7 @@ public class Arguments {
 	public long getLong(String option, long defaultRersult) {
 		if (args.containsKey(option)) {
 			try {
-				return Long.parseLong(args.get(option));
+				return Long.parseLong(getString(option, ""));
 			} catch (NumberFormatException e) {
 				reportOptionError(option, "Could not parse integer value");
 			}
@@ -125,7 +144,7 @@ public class Arguments {
 	public double getDouble(String option, double defaultRersult) {
 		if (args.containsKey(option)) {
 			try {
-				return Double.parseDouble(args.get(option));
+				return Double.parseDouble(getString(option, ""));
 			} catch (NumberFormatException e) {
 				reportOptionError(option, "Could not parse integer value");
 			}
@@ -139,7 +158,7 @@ public class Arguments {
 			return defaultRersult;
 		}
 
-		String rest = args.get(option);
+		String rest = getString(option, "");
 		long result = 0;
 
 		while (!rest.isEmpty()) {
@@ -218,8 +237,8 @@ public class Arguments {
 		return result.toString();
 	}
 
-	private static HashMap<String, String> getOptions(String line) {
-		HashMap<String, String> result = new HashMap<>();
+	private static HashMap<String, String[]> getOptions(String line) {
+		HashMap<String, String[]> result = new HashMap<>();
 		String[] keysAndValues = line.split("(?<!\\\\),");
 
 		for (String keyAndValue : keysAndValues) {
@@ -227,7 +246,15 @@ public class Arguments {
 				String[] parts = keyAndValue.split("(?<!\\\\)=", 2);
 
 				if (parts[0].length() > 0) {
-					result.put(dequote(parts[0]), parts.length == 1 ? null : dequote(parts[1]));
+					String key = dequote(parts[0]);
+
+					if (parts.length > 1) {
+						String[] oldOpts = result.containsKey(key) ? result.get(key) : new String[0];
+						String[] newOpts = new String[oldOpts.length + 1];
+						System.arraycopy(oldOpts, 0, newOpts, 0, oldOpts.length);
+						newOpts[oldOpts.length] = dequote(parts[1]);
+						result.put(key, newOpts);
+					}
 				}
 			}
 		}

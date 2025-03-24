@@ -92,6 +92,12 @@ public abstract class TestBase {
 		throw new AssertionError(msg);
 	}
 
+	public static void assertNrOfLines(String[] lines, int expectedNrOfLines) {
+		if (lines.length != expectedNrOfLines) {
+			failLines(lines, "Expected " + expectedNrOfLines + " lines but got " + lines.length, -1);
+		}
+	}
+
 	public static void assertLinesContains(String[] lines, String ... substrings) {
 		outer: for (String substring : substrings) {
 			for (String line : lines) {

@@ -135,6 +135,14 @@ public class LoggingUtils {
 		}
 	}
 
+	public static void log(Arguments args, Object[] parts) {
+		PrintStream stream = getStream(args);
+
+		for (Object part : parts) {
+			stream.print(part);
+		}
+	}
+
 	public static void logWithFormat(Arguments args, String format, Object[] values) {
 		Formatter formatter = getFormatter(args);
 		formatter.format(format + "\n", values);

@@ -352,6 +352,10 @@ public class JavaAgentRunner {
 	}
 
 	private boolean checkWaitTimeout(long t1) {
+		if (debugPort >= 0) {
+			return true; // Don't terminate if we are debugging.
+		}
+
 		long elapsed = (System.currentTimeMillis() - t1) / 1000;
 
 		// We should never wait this long.

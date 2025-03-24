@@ -98,7 +98,6 @@ public class SapTransformer implements ClassFileTransformer {
 			grantJfrAccessToModule(classBeingRedefined.getModule(), loader, className, protectionDomain);
 		}
 
-		System.out.println("Transform for " + className + (classBeingRedefined != null ? ".class" : ""));
 		return impl.transform(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
 	}
 
@@ -112,8 +111,6 @@ public class SapTransformer implements ClassFileTransformer {
 
 		grantJfrAccessToModule(module, loader, className, protectionDomain);
 
-		System.out.println(
-				"Transform for " + className + (classBeingRedefined != null ? ".class" : "") + " [" + module + "]");
 		return impl.transform(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
 	}
 }
