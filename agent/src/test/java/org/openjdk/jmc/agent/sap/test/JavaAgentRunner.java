@@ -175,8 +175,8 @@ public class JavaAgentRunner {
 			throw new IOException("No process");
 		}
 
-		if ((options.indexOf('=') >= 0) && System.getProperty("os.name").toLowerCase().startsWith("win")) {
-			options = "'" + options + "'"; // Windows can remove everything after the equals.
+		if (options.indexOf('=') >= 0) {
+			options = "'" + options + "'"; // jcmd can remove everything after the equals.
 		}
 
 		long pid = process.pid();

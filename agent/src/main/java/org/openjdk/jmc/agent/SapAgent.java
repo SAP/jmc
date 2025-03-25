@@ -35,6 +35,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +149,15 @@ public class SapAgent {
 			throw new IOException("Could not determine agent jar from " + file);
 		}
 
-		String jar = file.substring(6, file.indexOf(".jar!")) + "-boot.jar";
+		System.err.println("Agent base file: " + file);
+
+		String os = AccessController.doPrivileged(new PrivilegedAction<String>() {
+			public String run() {
+				return System.getProperty("os.name");
+			}
+		});
+		int skip = os.toLowerCase().startsWith("win") ? 6 : 5;
+		String jar = file.substring(skip, file.indexOf(".jar!")) + "-boot.jar";
 
 		if (!new File(jar).canRead()) {
 			throw new IOException("Could not find boot jar at " + jar);
