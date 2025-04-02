@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -639,6 +639,11 @@ public class ChartCanvas extends Canvas {
 					setHoveredItemData(data);
 				}
 			}
+
+			@Override
+			public boolean isChartTextCanvas() {
+				return false;
+			}
 		}, lastMouseX, lastMouseY);
 		// Attempt to reduce flicker by avoiding unnecessary updates.
 		if (!newRects.equals(highlightRects)) {
@@ -715,6 +720,11 @@ public class ChartCanvas extends Canvas {
 						range[1] = (x1 instanceof IQuantity) ? (IQuantity) x1 : null;
 					}
 				}
+
+				@Override
+				public boolean isChartTextCanvas() {
+					return false;
+				}
 			}, x, y);
 			if ((range[0] != null) || (range[1] != null)) {
 				if (!awtChart.select(range[0], range[1], p.y, p.y, true)) {
@@ -783,6 +793,7 @@ public class ChartCanvas extends Canvas {
 	public void infoAt(IChartInfoVisitor visitor, int x, int y) {
 		Point p = translateDisplayToImageCoordinates(x, y);
 		if (awtChart != null) {
+			visitor.setChartTextCanvas(false);
 			awtChart.infoAt(visitor, p.x, p.y);
 		}
 	}

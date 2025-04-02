@@ -84,7 +84,7 @@ jobs:
           echo "agentVersion=$(echo $AGENT_VERSION)" >> $GITHUB_OUTPUT
 
       - name: Download existing release file
-        uses: robinraju/release-downloader@v1
+        uses: robinraju/release-downloader@v1.9
         continue-on-error: true
         with:
           tag: ${{ steps.versions.outputs.githubRelease }}
@@ -133,43 +133,51 @@ jobs:
           echo doBuild: ${{ needs.parameters.outputs.doBuild }}
           echo commit: ${{ needs.parameters.outputs.commit }}
 
-  deleteold:
-    name: Delete old Release
-    needs: parameters
-    if: ${{ needs.parameters.outputs.doBuild == 'true' && needs.parameters.outputs.publish == 'true' && needs.parameters.outputs.release != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete old GitHub release ${{ needs.parameters.outputs.githubRelease }}
-        continue-on-error: true
-        uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          tag_name: ${{ needs.parameters.outputs.githubRelease }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
   build:
     name: Build JMC
-    needs: [parameters, deleteold]
+    needs: [parameters]
     if: needs.parameters.outputs.doBuild == 'true'
     runs-on: ubuntu-latest
     env:
       MAVEN_OPTS: -Xmx2048m
       MAVEN_CALL: mvn --batch-mode --no-transfer-progress
     steps:
+      - name: Delete old GitHub release ${{ needs.parameters.outputs.githubRelease }}
+        if: ${{ needs.parameters.outputs.publish == 'true' && needs.parameters.outputs.release != 'true' }}
+        continue-on-error: true
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: ${{ needs.parameters.outputs.githubRelease }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout JMC
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.parameters.outputs.commit }}
 
-      - name: Set up build JDK
-        uses: actions/setup-java@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: sapmachine
           java-version: '17'
           java-package: jdk
           mvn-toolchain-id: 'JavaSE-17'
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: sapmachine
+          java-version: '21'
+          java-package: jdk
+          mvn-toolchain-id: 'JavaSE-21'
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.8
+
       - name: Cache local Maven repository
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -245,7 +253,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.parameters.outputs.githubRelease }}
-          file: target/products/org.openjdk.jmc-linux.gtk.x86_64.tar.gz
+          file: target/products/org.openjdk.jmc-${{ needs.parameters.outputs.jmcVersion }}-linux.gtk.x86_64.tar.gz
           asset_name: sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-linux.gtk.x86_64.tar.gz
           overwrite: ${{ needs.parameters.outputs.release != 'true' }}
 
@@ -254,7 +262,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           tag: ${{ needs.parameters.outputs.githubRelease }}
-          file: target/products/org.openjdk.jmc-macosx.cocoa.aarch64.tar.gz
+          file: target/products/org.openjdk.jmc-${{ needs.parameters.outputs.jmcVersion }}-macosx.cocoa.aarch64.tar.gz
           asset_name: sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-macosx.cocoa.aarch64.tar.gz
           overwrite: ${{ needs.parameters.outputs.release != 'true' }}
 
@@ -263,7 +271,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           tag: ${{ needs.parameters.outputs.githubRelease }}
-          file: target/products/org.openjdk.jmc-macosx.cocoa.x86_64.tar.gz
+          file: target/products/org.openjdk.jmc-${{ needs.parameters.outputs.jmcVersion }}-macosx.cocoa.x86_64.tar.gz
           asset_name: sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-macosx.cocoa.x86_64.tar.gz
           overwrite: ${{ needs.parameters.outputs.release != 'true' }}
 
@@ -272,7 +280,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           tag: ${{ needs.parameters.outputs.githubRelease }}
-          file: target/products/org.openjdk.jmc-win32.win32.x86_64.zip
+          file: target/products/org.openjdk.jmc-${{ needs.parameters.outputs.jmcVersion }}-win32.win32.x86_64.zip
           asset_name: sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-win32.win32.x86_64.zip
           overwrite: ${{ needs.parameters.outputs.release != 'true' }}
 

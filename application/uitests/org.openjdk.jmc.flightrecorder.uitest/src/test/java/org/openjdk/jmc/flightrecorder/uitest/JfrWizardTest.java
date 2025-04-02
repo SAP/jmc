@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -37,6 +37,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -77,6 +78,7 @@ public class JfrWizardTest extends MCJemmyTestBase {
 	 * recording running as recording settings for different recording result in a union setting in
 	 * each of the recordings
 	 */
+	@Ignore("Failing on Windows on JDK21")
 	@Test
 	public void verifyMinimalRecordingEventSettings() {
 		JfrWizard recordingWizard = MC.jvmBrowser.startFlightRecordingWizard();

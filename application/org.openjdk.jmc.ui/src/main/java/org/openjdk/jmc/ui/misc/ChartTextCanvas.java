@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020, 2023, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2020, 2023, Red Hat Inc. All rights reserved.
+ * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025, Red Hat Inc. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -424,6 +424,11 @@ public class ChartTextCanvas extends Canvas {
 					setHoveredItemData(data);
 				}
 			}
+
+			@Override
+			public boolean isChartTextCanvas() {
+				return true;
+			}
 		}, lastMouseX, lastMouseY);
 		redraw();
 		if (chartCanvas != null) {
@@ -491,6 +496,7 @@ public class ChartTextCanvas extends Canvas {
 	public void infoAt(IChartInfoVisitor visitor, int x, int y) {
 		Point p = chartCanvas.translateDisplayToImageCoordinates(x, y);
 		if (awtChart != null) {
+			visitor.setChartTextCanvas(true);
 			awtChart.infoAt(visitor, p.x, p.y);
 		}
 	}

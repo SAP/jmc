@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2019, 2023, Oracle and/or its affiliates. All rights reserved.
-   Copyright (c) 2019, 2023, Datadog, Inc. All rights reserved.
+   Copyright (c) 2019, 2025, Oracle and/or its affiliates. All rights reserved.
+   Copyright (c) 2019, 2025, Datadog, Inc. All rights reserved.
 
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
    The contents of this file are subject to the terms of either the Universal Permissive License
-   v 1.0 as shown at http://oss.oracle.com/licenses/upl
+   v 1.0 as shown at https://oss.oracle.com/licenses/upl
 
    or the following license:
 
@@ -74,7 +74,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://unpkg.com/@hpcc-js/wasm@1.14.1/dist/index.js</url>
+							<url>https://unpkg.com/@hpcc-js/wasm@2.18.0/dist/index.js</url>
 							<unpack>false</unpack>
 							<outputDirectory>${download-maven-plugin.output}</outputDirectory>
 							<skipCache>true</skipCache>
@@ -88,7 +88,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://unpkg.com/d3-graphviz@4.1.1/build/d3-graphviz.js</url>
+							<url>https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.js</url>
 							<unpack>false</unpack>
 							<outputDirectory>${download-maven-plugin.output}</outputDirectory>
 							<skipCache>true</skipCache>
@@ -102,7 +102,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>https://unpkg.com/@hpcc-js/wasm@1.14.1/dist/graphvizlib.wasm</url>
+							<url>https://unpkg.com/@hpcc-js/wasm@2.18.0/dist/graphvizlib.wasm</url>
 							<unpack>false</unpack>
 							<outputDirectory>${download-maven-plugin.output}</outputDirectory>
 							<skipCache>true</skipCache>

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -35,6 +35,7 @@ package org.openjdk.jmc.flightrecorder.uitest;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openjdk.jmc.test.jemmy.MCJemmyTestBase;
@@ -247,6 +248,7 @@ public class ControlRecordingsTest extends MCJemmyTestBase {
 	/**
 	 * Verifies that recording events can be added/removed on the fly
 	 */
+	@Ignore("JDK-8286740 did not fix the issue on Windows")
 	@Test
 	public void modifyRecordingEvents() {
 		// Dump the test recording to get the current event settings (combined from, possibly multiple recordings)
@@ -292,6 +294,7 @@ public class ControlRecordingsTest extends MCJemmyTestBase {
 	/**
 	 * Verifies that recording event threshold settings can be modified on the fly
 	 */
+	@Ignore("JDK-8286740 did not fix the issue on Windows")
 	@Test
 	public void modifyEventThreshold() {
 		// Dump the test recording to get the current event settings (combined from, possibly multiple recordings)
@@ -330,6 +333,7 @@ public class ControlRecordingsTest extends MCJemmyTestBase {
 	/**
 	 * Verifies that recording event period settings can be modified on the fly
 	 */
+	@Ignore("JDK-8286740 did not fix the issue on Windows")
 	@Test
 	public void modifyEventPeriod() {
 		// FIXME: JMC-5207 - Remove the assume call once the GTK3 related bug has been fixed

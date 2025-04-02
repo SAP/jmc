@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 1999, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -115,6 +115,7 @@ public class Transform {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 		transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+		transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		try (InputStream xslIn = newInputStream(sylesheetFile);
 				InputStream in = newInputStream(inputFile);
 				OutputStream out = newOutputStream(outputFile)) {

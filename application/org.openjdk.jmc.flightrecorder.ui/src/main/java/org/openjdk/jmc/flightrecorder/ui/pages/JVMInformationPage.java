@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -234,7 +234,7 @@ public class JVMInformationPage extends AbstractDataPage {
 			infoViewer = new ItemAggregateViewer(jvmInfSection, toolkit);
 			infoViewer.addAggregate(JdkAggregators.JVM_START_TIME);
 			infoViewer.addAggregate(JdkAggregators.JVM_NAME);
-			infoViewer.addAggregate(JdkAggregators.JVM_PID);
+			infoViewer.addAggregate(JdkAggregators.PID);
 			infoViewer.addAggregate(JdkAggregators.JVM_VERSION);
 			infoViewer.addAggregate(JdkAggregators.JVM_ARGUMENTS);
 			infoViewer.addAggregate(JdkAggregators.JAVA_ARGUMENTS);

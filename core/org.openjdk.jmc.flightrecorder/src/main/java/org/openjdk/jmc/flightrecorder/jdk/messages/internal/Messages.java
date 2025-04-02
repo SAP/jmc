@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -494,6 +494,10 @@ public class Messages {
 	public static final String ATTR_REVOKATION_LOCK_CLASS_DESC = "ATTR_REVOKATION_LOCK_CLASS_DESC"; //$NON-NLS-1$
 	public static final String ATTR_REVOKED_CLASS = "ATTR_REVOKED_CLASS"; //$NON-NLS-1$
 	public static final String ATTR_REVOKED_CLASS_DESC = "ATTR_REVOKED_CLASS_DESC"; //$NON-NLS-1$
+	public static final String ATTR_RSS_SIZE = "ATTR_RSS_SIZE"; //$NON-NLS-1$
+	public static final String ATTR_RSS_SIZE_DESC = "ATTR_RSS_SIZE_DESC"; //$NON-NLS-1$
+	public static final String ATTR_RSS_PEAK = "ATTR_RSS_PEAK"; //$NON-NLS-1$
+	public static final String ATTR_RSS_PEAK_DESC = "ATTR_RSS_PEAK_DESC"; //$NON-NLS-1$
 	public static final String ATTR_SAFEPOINT = "ATTR_SAFEPOINT"; //$NON-NLS-1$
 	public static final String ATTR_SAFEPOINT_DESC = "ATTR_SAFEPOINT_DESC"; //$NON-NLS-1$
 	public static final String ATTR_SAMPLE_WEIGHT = "ATTR_SAMPLE_WEIGHT"; //$NON-NLS-1$
@@ -550,6 +554,14 @@ public class Messages {
 	public static final String ATTR_USER_LOAD_DESC = "ATTR_USER_LOAD_DESC"; //$NON-NLS-1$
 	public static final String ATTR_JAVA_THREAD = "ATTR_JAVA_THREAD"; //$NON-NLS-1$
 	public static final String ATTR_JAVA_THREAD_DESC = "ATTR_JAVA_THREAD_DESC"; //$NON-NLS-1$
+	public static final String ATTR_THREADS_ACCUMULATED_COUNT = "ATTR_THREADS_ACCUMULATED_COUNT";
+	public static final String ATTR_THREADS_ACCUMULATED_COUNT_DESC = "ATTR_THREADS_ACCUMULATED_COUNT_DESC";
+	public static final String ATTR_THREADS_ACTIVE_COUNT = "ATTR_THREADS_ACTIVE_COUNT";
+	public static final String ATTR_THREADS_ACTIVE_COUNT_DESC = "ATTR_THREADS_ACTIVE_COUNT_DESC";
+	public static final String ATTR_THREADS_DAEMON_COUNT = "ATTR_THREADS_DAEMON_COUNT";
+	public static final String ATTR_THREADS_DAEMON_COUNT_DESC = "ATTR_THREADS_DAEMON_COUNT_DESC";
+	public static final String ATTR_THREADS_PEAK_COUNT = "ATTR_THREADS_PEAK_COUNT";
+	public static final String ATTR_THREADS_PEAK_COUNT_DESC = "ATTR_THREADS_PEAK_COUNT_DESC";
 
 	private Messages() {
 	}

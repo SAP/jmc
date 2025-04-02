@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -38,7 +38,8 @@ import org.openjdk.jmc.rjmx.triggers.TriggerRule;
 
 public class ExceptionHandler implements IExceptionHandler {
 	@Override
-	public void handleException(IConnectionHandle connectionHandle, TriggerRule rule, Throwable throwable) {
-		AlertPlugin.getDefault().addException(connectionHandle, rule, throwable);
+	public void handleException(
+		IConnectionHandle connectionHandle, TriggerRule rule, Throwable throwable, String triggerMessage) {
+		AlertPlugin.getDefault().addException(connectionHandle, rule, throwable, triggerMessage);
 	}
 }

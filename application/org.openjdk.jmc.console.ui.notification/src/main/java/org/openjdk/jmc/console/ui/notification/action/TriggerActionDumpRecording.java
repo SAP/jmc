@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -85,7 +85,7 @@ public class TriggerActionDumpRecording extends TriggerAction {
 	}
 
 	protected Job createDumpFlightRecordingJob(final TriggerEvent event, final IFlightRecorderService service) {
-		MCFile path = IDESupportToolkit.createFileResource(getSetting("file").getFileName()); //$NON-NLS-1$
+		MCFile path = IDESupportToolkit.createFileResource(getSetting("dumpfilename").getFileName()); //$NON-NLS-1$
 		IQuantity timerange = getSetting("timerange").getQuantity(); //$NON-NLS-1$
 		Boolean open = getSetting("open").getBoolean(); //$NON-NLS-1$
 		return new WriteAndOpenRecordingJob(

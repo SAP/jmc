@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -40,6 +40,7 @@ import org.openjdk.jmc.rjmx.common.IConnectionHandle;
 import org.openjdk.jmc.rjmx.common.services.IDiagnosticCommandService;
 import org.openjdk.jmc.rjmx.triggers.TriggerAction;
 import org.openjdk.jmc.rjmx.triggers.TriggerEvent;
+import org.openjdk.jmc.rjmx.triggers.internal.NotificationToolkit;
 import org.openjdk.jmc.ui.common.idesupport.IDESupportToolkit;
 import org.openjdk.jmc.ui.common.resource.MCFile;
 
@@ -52,12 +53,13 @@ public class TriggerActionDiagnosticCommand extends TriggerAction {
 		String result = (e.getSource().getServiceOrThrow(IDiagnosticCommandService.class))
 				.runCtrlBreakHandlerWithResult(command);
 		InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8));
+		String triggerMessage = NotificationToolkit.prettyPrint(e);
 
 		synchronized (this) {
 			MCFile file = IDESupportToolkit.createFileResource(getLogFileName());
 			String jobName = append ? Messages.TriggerActionDiagnosticCommand_APPEND_ACTION_TEXT
 					: Messages.TriggerActionDiagnosticCommand_WRITE_ACTION_TEXT;
-			IDESupportToolkit.writeAsJob(jobName, file, stream, append);
+			IDESupportToolkit.writeAsJob(jobName, file, stream, append, triggerMessage);
 		}
 	}
 

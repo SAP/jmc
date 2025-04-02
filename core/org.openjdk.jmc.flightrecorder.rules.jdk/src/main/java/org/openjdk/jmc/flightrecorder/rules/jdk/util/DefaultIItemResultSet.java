@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -155,6 +155,7 @@ final class DefaultIItemResultSet implements IItemResultSet {
 		data.addAll(processingQueue);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void checkStatusOfAllTasks(List<Future> totalAssignedTasks) {
 		int completedTask = 0;
 		for (Future future : totalAssignedTasks) {

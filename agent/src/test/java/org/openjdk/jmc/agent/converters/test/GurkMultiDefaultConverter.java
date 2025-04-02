@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2020, Datadog, Inc. All rights reserved.
+ * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025, Datadog, Inc. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -32,6 +32,8 @@
  * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.openjdk.jmc.agent.converters.test;
+
+import java.util.Date;
 
 import org.openjdk.jmc.agent.test.Gurka;
 
@@ -61,5 +63,37 @@ public class GurkMultiDefaultConverter {
 
 	public static int convert(Long value) {
 		return value.intValue();
+	}
+
+	public static String convert(boolean b) {
+		return Boolean.toString(b);
+	}
+
+	public static String convert(byte b) {
+		return Byte.toString(b);
+	}
+
+	public static String convert(short s) {
+		return Short.toString(s);
+	}
+
+	public static String convert(char c) {
+		return String.valueOf(c);
+	}
+
+	public static long convert(int i) {
+		return i;
+	}
+
+	public static int convert(float f) {
+		return Math.round(f);
+	}
+
+	public static String convert(long l) {
+		return new Date(l).toString();
+	}
+
+	public static String convert(double d) {
+		return Integer.toString((int) d);
 	}
 }

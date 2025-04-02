@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -647,12 +647,19 @@ public class Messages {
 	public static final String VMOperationRule_CONFIG_WARNING_LIMIT = "VMOperationRule_CONFIG_WARNING_LIMIT"; //$NON-NLS-1$
 	public static final String VMOperationRule_CONFIG_WARNING_LIMIT_LONG = "VMOperationRule_CONFIG_WARNING_LIMIT_LONG"; //$NON-NLS-1$
 	public static final String VMOperations_RULE_NAME = "VMOperations_RULE_NAME"; //$NON-NLS-1$
+	public static final String VMOperations_Duration_Operation = "VMOperations_Duration_Operation"; //$NON-NLS-1$
 	public static final String VerifyNoneRule_RULE_NAME = "VerifyNoneRule_RULE_NAME"; //$NON-NLS-1$
 	public static final String VerifyNoneRule_TEXT_INFO = "VerifyNoneRule_TEXT_INFO"; //$NON-NLS-1$
 	public static final String VerifyNoneRule_TEXT_INFO_LONG = "VerifyNoneRule_TEXT_INFO_LONG"; //$NON-NLS-1$
 	public static final String VerifyNoneRule_TEXT_OK = "VerifyNoneRule_TEXT_OK"; //$NON-NLS-1$
 	public static final String VerifyNoneRule_WLS_TEXT_INFO = "VerifyNoneRule_WLS_TEXT_INFO"; //$NON-NLS-1$
 	public static final String VerifyNoneRule_WLS_TEXT_INFO_LONG = "VerifyNoneRule_WLS_TEXT_INFO_LONG"; //$NON-NLS-1$
+	public static final String PID1Rule_RULE_NAME = "PID1Rule_RULE_NAME"; //$NON-NLS-1$
+	public static final String PID1Rule_TEXT_OK = "PID1Rule_TEXT_OK"; //$NON-NLS-1$
+	public static final String PID1Rule_TEXT_INFO_LONG = "PID1Rule_TEXT_INFO_LONG"; //$NON-NLS-1$
+	public static final String PID1Rule_TEXT_INFO = "PID1Rule_TEXT_INFO"; //$NON-NLS-1$
+	public static final String PID1Rule_TEXT_SOLUTION = "PID1Rule_TEXT_SOLUTION"; //$NON-NLS-1$
+	public static final String PID1Rule_NO_PID = "PID1Rule_NO_PID"; //$NON-NLS-1$
 
 	private Messages() {
 	}

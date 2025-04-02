@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -115,8 +115,9 @@ public final class JdkAggregators {
 
 	// VM Info
 	public static final IAggregator<String, ?> JVM_NAME = distinctAsString(VM_INFO, JdkAttributes.JVM_NAME);
-	public static final IAggregator<IQuantity, ?> JVM_PID = min(JdkAttributes.JVM_PID.getName(), null, VM_INFO,
-			JdkAttributes.JVM_PID);
+	@Deprecated
+	public static final IAggregator<IQuantity, ?> JVM_PID = Aggregators.getJvmPid(VM_INFO, JdkAttributes.PID);
+	public static final IAggregator<String, ?> PID = distinctAsString(VM_INFO, JdkAttributes.PID);
 	public static final IAggregator<IQuantity, ?> JVM_START_TIME = min(JdkAttributes.JVM_START_TIME.getName(), null,
 			VM_INFO, JdkAttributes.JVM_START_TIME);
 	public static final IAggregator<String, ?> JVM_VERSION = distinctAsString(VM_INFO, JdkAttributes.JVM_VERSION);
