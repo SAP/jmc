@@ -247,6 +247,16 @@ jobs:
           asset_name: buildRef-${{ needs.parameters.outputs.jmcVersion }}.txt
           overwrite: ${{ needs.parameters.outputs.release != 'true' }}
 
+      - name: Upload sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-linux.gtk.aarch64.tar.gz
+        if: needs.parameters.outputs.publish == 'true'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.parameters.outputs.githubRelease }}
+          file: target/products/org.openjdk.jmc-${{ needs.parameters.outputs.jmcVersion }}-linux.gtk.aarch64.tar.gz
+          asset_name: sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-linux.gtk.aarch64.tar.gz
+          overwrite: ${{ needs.parameters.outputs.release != 'true' }}
+
       - name: Upload sap.jmc-${{ needs.parameters.outputs.jmcVersion }}-linux.gtk.x86_64.tar.gz
         if: needs.parameters.outputs.publish == 'true'
         uses: svenstaro/upload-release-action@v2
