@@ -5,7 +5,7 @@
         <allowconverter>true</allowconverter>
     </config>
     <events>
-        <event id="jdk.log.timeZoneChanged">
+        <event id="jdk.log.localeChanged">
             <label>localeChanged</label>
             <description>Change of the default locale</description>
             <class>java.util.Locale</class>
