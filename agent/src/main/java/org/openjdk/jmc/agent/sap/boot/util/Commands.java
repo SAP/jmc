@@ -38,7 +38,7 @@ public class Commands {
 			GenericLogger.commands[5]};
 
 	public static void printAllCommands() {
-		System.out.println("The following commands are suppored:");
+		System.out.println("The following commands are supported:");
 
 		for (Command command : commands) {
 			System.out.println(command.getName() + ": " + command.getDescription());
@@ -77,8 +77,9 @@ public class Commands {
 			String unknownArgument = args.getUnknownArgument();
 
 			if (unknownArgument != null) {
-				System.err
-						.println("Unknown argument '" + unknownArgument + "' for command '" + command.getName() + "'.");
+				// spotless:off
+				System.err.println("Unknown argument '" + unknownArgument + "' for command '" + command.getName() + "'.");
+				// spotless:on
 				printHelp(command);
 
 				return false;

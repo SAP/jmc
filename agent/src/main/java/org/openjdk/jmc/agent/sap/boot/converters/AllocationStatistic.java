@@ -47,7 +47,7 @@ public class AllocationStatistic {
 		return result;
 	}
 
-	public void addAllocastion(long addr, long size) {
+	public void addAllocation(long addr, long size) {
 		AllocationSite site = new AllocationSite(size);
 
 		synchronized (activeAllocations) {

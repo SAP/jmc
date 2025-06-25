@@ -103,7 +103,7 @@ public class UnsafeMemoryAllocationLogger {
 
 				// Realloc with size 0 is a free.
 				if (newSize > 0) {
-					allocations.addAllocastion(toAdd, newSize);
+					allocations.addAllocation(toAdd, newSize);
 				}
 			}
 		} else {
@@ -111,7 +111,7 @@ public class UnsafeMemoryAllocationLogger {
 			Long size = sizeKey.get();
 
 			if (size != null) {
-				allocations.addAllocastion(toAdd, size);
+				allocations.addAllocation(toAdd, size);
 			}
 		}
 
