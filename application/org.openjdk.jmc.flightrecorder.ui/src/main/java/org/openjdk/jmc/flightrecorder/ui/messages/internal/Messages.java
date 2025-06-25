@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -253,6 +253,13 @@ public class Messages extends NLS {
 	public static String GarbageCollectionsPage_USED_HEAP_BEFORE_GC;
 	public static String GarbageCollectionsPage_USED_HEAP_DELTA;
 	public static String GarbageCollectionsPage_USED_METASPACE_DELTA;
+	public static String HDRHistogramView_NO_VALID_SELECTION_TEXT;
+	public static String HDRHistogramView_DURATION_COLUMN_NAME;
+	public static String HDRHistogramView_EVENT_COUNT_COLUMN_NAME;
+	public static String HDRHistogramView_PERCENTILE_SELECTION;
+	public static String HDRHistogramView_DURATION_SELECTION;
+	public static String HDRHistogramView_DURATIONS_CHART_TITLE;
+	public static String HDRHistogramView_DURATIONS_CHART_DESCRIPTION;
 	public static String HeapPage_LIVE_SIZE_OF_CLASS;
 	public static String HeapPage_OVERLAY_GC;
 	public static String HeapPage_OVERLAY_GC_DESC;

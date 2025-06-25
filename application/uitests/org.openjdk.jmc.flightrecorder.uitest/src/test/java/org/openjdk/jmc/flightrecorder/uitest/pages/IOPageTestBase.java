@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2019, Red Hat Inc. All rights reserved.
+ * Copyright (c) 2019, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2025, Red Hat Inc. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -51,7 +51,7 @@ import org.openjdk.jmc.test.jemmy.misc.wrappers.MCTable.TableRow;
 public abstract class IOPageTestBase extends MCJemmyTestBase {
 
 	private static final String PERCENTILE_COL = Messages.DurationPercentileTable_PERCENTILE_COL_NAME;
-	private static final double[] PERCENTILES = {0.0, 90.0, 99.0, 99.9, 99.99, 99.999, 100.0};
+	private static final double[] PERCENTILES = {0.0, 50.0, 90.0, 99.0, 99.9, 99.99, 99.999, 100.0};
 
 	protected void checkPercentileTable(
 		String readCol, String readCountCol, String writeCol, String writeCountCol, long[][] tableValues) {

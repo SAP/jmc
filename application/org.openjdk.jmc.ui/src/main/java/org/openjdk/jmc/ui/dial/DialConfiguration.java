@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -42,6 +42,7 @@ import org.openjdk.jmc.common.unit.KindOfQuantity;
 import org.openjdk.jmc.common.unit.QuantityConversionException;
 import org.openjdk.jmc.common.unit.UnitLookup;
 import org.openjdk.jmc.common.util.ColorToolkit;
+import org.openjdk.jmc.ui.common.util.ThemeUtils;
 
 public class DialConfiguration {
 
@@ -55,7 +56,7 @@ public class DialConfiguration {
 
 	private Color m_gradientBeginColor = new Color(107, 143, 183);
 	private Color m_gradientEndColor = new Color(107, 143, 183);
-	private Color m_waterMarkColor = new Color(150, 150, 150);
+	private Color m_waterMarkColor = ThemeUtils.isDarkTheme() ? new Color(80, 80, 80) : new Color(150, 150, 150);
 	private IQuantity m_gradientBeginValue;
 	private IQuantity m_gradientEndValue;
 	private boolean m_useWatermark = true;

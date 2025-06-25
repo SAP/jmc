@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -66,6 +66,7 @@ import org.openjdk.jmc.rjmx.common.subscription.IMRIMetadataService;
 import org.openjdk.jmc.rjmx.common.subscription.IMRIService;
 import org.openjdk.jmc.rjmx.common.subscription.IMRIValueListener;
 import org.openjdk.jmc.rjmx.common.subscription.ISubscriptionService;
+import org.openjdk.jmc.ui.common.util.ThemeUtils;
 import org.openjdk.jmc.rjmx.common.subscription.MRI;
 import org.openjdk.jmc.rjmx.common.subscription.MRIValueEvent;
 import org.openjdk.jmc.rjmx.subscription.MRIMetadataToolkit;
@@ -128,7 +129,7 @@ public class CombinedDialsSectionPart extends MCSectionPart implements IAttribut
 		private final RateLimitedRefresher infoRefresher;
 
 		AttributeDial(MRI mri, DialConfiguration dialConfiguration) {
-			super(m_dialsHolder, toolkit, dialConfiguration);
+			super(m_dialsHolder, toolkit, dialConfiguration, ThemeUtils.isDarkTheme());
 			this.mri = mri;
 			statistics = new StatisticsCalculator(mri);
 			infoRefresher = new RateLimitedRefresher(rateCoordinator, 100) {

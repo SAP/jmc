@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -56,7 +56,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.openjdk.jmc.common.io.ValidatingObjectInputStream;
 
 class DecryptedStorage {
-	private static final String HMAC_ALGORITHM = "HmacSHA1"; //$NON-NLS-1$
+	private static final String HMAC_ALGORITHM = "HmacSHA256"; //$NON-NLS-1$
 	private static final String RANDOM_GEN_ALGORITHM = "SHA1PRNG"; //$NON-NLS-1$
 	static final int SALT_LEN = 8;
 	private static final int ITERATION_COUNT_MIN = 100000;

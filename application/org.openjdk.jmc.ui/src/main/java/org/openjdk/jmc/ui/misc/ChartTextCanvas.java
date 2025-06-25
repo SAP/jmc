@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020, 2024, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2020, 2024, Red Hat Inc. All rights reserved.
+ * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025, Red Hat Inc. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -65,6 +65,7 @@ import org.openjdk.jmc.ui.charts.IXDataRenderer;
 import org.openjdk.jmc.ui.charts.XYChart;
 import org.openjdk.jmc.ui.handlers.MCContextMenuManager;
 import org.openjdk.jmc.ui.misc.PatternFly.Palette;
+import org.openjdk.jmc.ui.common.util.ThemeUtils;
 
 public class ChartTextCanvas extends Canvas {
 	private int laneHeight;
@@ -226,7 +227,9 @@ public class ChartTextCanvas extends Canvas {
 				Graphics2D g2d = awtCanvas.getGraphics(rect.width, rect.height);
 				minLaneHeight = (int) (g2d.getFontMetrics().getHeight() * xScale);
 				Point adjusted = chartCanvas.translateDisplayToImageCoordinates(rect.width, rect.height);
-				g2d.setColor(Palette.PF_BLACK_100.getAWTColor());
+				// Use theme-appropriate color for background
+				boolean isDarkTheme = ThemeUtils.isDarkTheme();
+				g2d.setColor(isDarkTheme ? Palette.PF_BLACK_900.getAWTColor() : Palette.PF_BLACK_100.getAWTColor());
 				g2d.fillRect(0, 0, adjusted.x, adjusted.y);
 				render(g2d, adjusted.x, adjusted.y);
 				((ScrolledComposite) getParent()).setMinSize(rect.width, rect.height);

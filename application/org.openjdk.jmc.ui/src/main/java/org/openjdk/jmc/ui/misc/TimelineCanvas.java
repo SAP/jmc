@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2020, Red Hat Inc. All rights reserved.
+ * Copyright (c) 2020, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2025, Red Hat Inc. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -52,6 +52,7 @@ import org.openjdk.jmc.common.unit.IRange;
 import org.openjdk.jmc.ui.charts.AWTChartToolkit;
 import org.openjdk.jmc.ui.charts.SubdividedQuantityRange;
 import org.openjdk.jmc.ui.charts.XYChart;
+import org.openjdk.jmc.ui.common.util.ThemeUtils;
 import org.openjdk.jmc.ui.misc.PatternFly.Palette;
 
 public class TimelineCanvas extends Canvas {
@@ -116,12 +117,13 @@ public class TimelineCanvas extends Canvas {
 
 			// Draw the background
 			Point adjusted = chartCanvas.translateDisplayToImageCoordinates(rect.width, rect.height);
-			g2d.setColor(Palette.PF_BLACK_100.getAWTColor());
+			boolean isDarkTheme = ThemeUtils.isDarkTheme();
+			g2d.setColor(isDarkTheme ? Palette.PF_BLACK_900.getAWTColor() : Palette.PF_BLACK_100.getAWTColor());
 			g2d.fillRect(0, 0, adjusted.x, adjusted.y);
 
 			// Draw the horizontal axis
 			if (xTickRange != null) {
-				g2d.setColor(Palette.PF_BLACK.getAWTColor());
+				g2d.setColor(isDarkTheme ? java.awt.Color.WHITE : Palette.PF_BLACK.getAWTColor());
 				AWTChartToolkit.drawAxis(g2d, xTickRange, 0, false, 1, false, xOffset);
 			}
 
@@ -139,7 +141,7 @@ public class TimelineCanvas extends Canvas {
 			timelineRect = new Rectangle(xOffset,
 					chartCanvas.translateDisplayToImageYCoordinates(rangeIndicatorYOffset), adjusted.x,
 					chartCanvas.translateDisplayToImageYCoordinates(rangeIndicatorHeight));
-			g2d.setPaint(Palette.PF_BLACK_600.getAWTColor());
+			g2d.setPaint(isDarkTheme ? java.awt.Color.LIGHT_GRAY : Palette.PF_BLACK_600.getAWTColor());
 			g2d.drawRect(timelineRect.x, timelineRect.y, timelineRect.width, timelineRect.height);
 
 			awtCanvas.paint(e, 0, 0);

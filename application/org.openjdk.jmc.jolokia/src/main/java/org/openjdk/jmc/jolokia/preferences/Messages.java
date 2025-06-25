@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2024, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2024, Kantega AS. All rights reserved.
+ * Copyright (c) 2024, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2024, 2025, Kantega AS. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -44,6 +44,8 @@ public class Messages extends NLS {
 	public static String JolokiaPreferencePage_MulticastGroupTooltip;
 	public static String JolokiaPreferencePage_MulticastPortLabel;
 	public static String JolokiaPreferencePage_MulticastPortTooltip;
+	public static String JolokiaPreferencePage_WarningText;
+	public static String JolokiaPreferencePage_WarningTitle;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

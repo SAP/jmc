@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -75,6 +75,7 @@ import org.openjdk.jmc.ui.charts.IXDataRenderer;
 import org.openjdk.jmc.ui.charts.XYChart;
 import org.openjdk.jmc.ui.handlers.MCContextMenuManager;
 import org.openjdk.jmc.ui.misc.PatternFly.Palette;
+import org.openjdk.jmc.ui.common.util.ThemeUtils;
 
 public class ChartCanvas extends Canvas {
 	private int laneHeight;
@@ -239,7 +240,8 @@ public class ChartCanvas extends Canvas {
 			if (awtNeedsRedraw || !awtCanvas.hasImage(rect.width, rect.height)) {
 				Graphics2D g2d = awtCanvas.getGraphics(rect.width, rect.height);
 				Point adjusted = translateDisplayToImageCoordinates(rect.width, rect.height);
-				g2d.setColor(Palette.PF_BLACK_100.getAWTColor());
+				g2d.setColor(ThemeUtils.isDarkTheme() ? Palette.PF_BLACK_900.getAWTColor()
+						: Palette.PF_BLACK_100.getAWTColor());
 				g2d.fillRect(0, 0, adjusted.x, adjusted.y);
 				render(g2d, adjusted.x, adjusted.y);
 				if (isScrollableChart()) {

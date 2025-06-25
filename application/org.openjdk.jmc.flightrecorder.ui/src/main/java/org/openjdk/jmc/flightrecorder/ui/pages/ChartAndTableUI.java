@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -122,9 +122,10 @@ abstract class ChartAndTableUI implements IPageUI {
 		table = buildHistogram(sash, state.getChild(TABLE), classifier);
 		MCContextMenuManager mm = MCContextMenuManager.create(table.getManager().getViewer().getControl());
 		ColumnMenusFactory.addDefaultMenus(table.getManager(), mm);
-		table.getManager().getViewer().addSelectionChangedListener(e -> buildChart());
-		table.getManager().getViewer()
-				.addSelectionChangedListener(e -> pageContainer.showSelection(table.getSelection().getItems()));
+		table.getManager().getViewer().addSelectionChangedListener(e -> {
+			buildChart();
+			pageContainer.showSelection(table.getSelection().getItems());
+		});
 		SelectionStoreActionToolkit.addSelectionStoreActions(pageContainer.getSelectionStore(), table,
 				NLS.bind(Messages.ChartAndTableUI_HISTOGRAM_SELECTION, sectionTitle), mm);
 		tableFilterComponent = FilterComponent.createFilterComponent(table.getManager().getViewer().getControl(),

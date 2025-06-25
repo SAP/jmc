@@ -5,7 +5,7 @@
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # The contents of this file are subject to the terms of either the Universal Permissive License
-# v 1.0 as shown at http://oss.oracle.com/licenses/upl
+# v 1.0 as shown at https://oss.oracle.com/licenses/upl
 #
 # or the following license:
 #
@@ -72,14 +72,14 @@ jobs:
     - name: Set up Java 17
       uses: actions/setup-java@v4
       with:
-        distribution: temurin
+        distribution: sapmachine
         java-version: '17'
         java-package: jdk
         mvn-toolchain-id: 'JavaSE-17'
     - name: Set up Java 21
       uses: actions/setup-java@v4
       with:
-        distribution: temurin
+        distribution: sapmachine
         java-version: '21'
         java-package: jdk
         mvn-toolchain-id: 'JavaSE-21'

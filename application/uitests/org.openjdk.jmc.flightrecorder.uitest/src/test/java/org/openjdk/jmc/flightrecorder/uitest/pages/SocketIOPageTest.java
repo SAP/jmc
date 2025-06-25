@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2019, Red Hat Inc. All rights reserved.
+ * Copyright (c) 2019, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2025, Red Hat Inc. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -56,6 +56,7 @@ public class SocketIOPageTest extends IOPageTestBase {
 	// @formatter:off
 	private static final long[][] TABLE_VALUES = {
 			{3218, 209, 4624, 373},
+			{141567, 105, 53119, 187},
 			{998768639, 22, 611327, 38},
 			{999292927, 7, 1814527, 4},
 			{999817215, 1, 4288511, 1},

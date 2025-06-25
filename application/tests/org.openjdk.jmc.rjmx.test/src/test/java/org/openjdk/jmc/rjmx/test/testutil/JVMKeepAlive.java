@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -35,8 +35,6 @@ package org.openjdk.jmc.rjmx.test.testutil;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 /**
  * Simple, small test class to make a JVM stay awake. Takes one optional argument, which is the
@@ -63,12 +61,7 @@ public class JVMKeepAlive {
 	private static class JVMKeepAliveSlayer implements Runnable {
 		@Override
 		public void run() {
-			String portStr = AccessController.doPrivileged(new PrivilegedAction<String>() {
-				@Override
-				public String run() {
-					return System.getProperty(PROPERTY_KILL_PORT, String.valueOf(DEFAULT_KILL_PORT));
-				}
-			});
+			String portStr = System.getProperty(PROPERTY_KILL_PORT, String.valueOf(DEFAULT_KILL_PORT));
 
 			int port = 0;
 			try {

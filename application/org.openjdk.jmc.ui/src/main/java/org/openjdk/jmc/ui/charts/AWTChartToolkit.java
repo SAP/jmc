@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2025, Oracle and/or its affiliates. All rights reserved.
  * 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * The contents of this file are subject to the terms of either the Universal Permissive License
- * v 1.0 as shown at http://oss.oracle.com/licenses/upl
+ * v 1.0 as shown at https://oss.oracle.com/licenses/upl
  *
  * or the following license:
  *
@@ -52,6 +52,7 @@ import org.openjdk.jmc.common.unit.IQuantity;
 import org.openjdk.jmc.common.unit.IRange;
 import org.openjdk.jmc.common.unit.QuantityRange;
 import org.openjdk.jmc.ui.UIPlugin;
+import org.openjdk.jmc.ui.common.util.ThemeUtils;
 import org.openjdk.jmc.ui.preferences.PreferenceConstants;
 
 public class AWTChartToolkit {
@@ -306,6 +307,10 @@ public class AWTChartToolkit {
 		int labelYPos = labelAhead ? axisPos - TICK_SIZE : axisPos + TICK_SIZE + textAscent;
 		final int labelSpacing;
 
+		Paint originalPaint = ctx.getPaint();
+		Paint axisPaint = ThemeUtils.isDarkTheme() ? Color.WHITE : Color.BLACK;
+		ctx.setPaint(axisPaint);
+
 		if (vertical) {
 			ctx.drawLine(axisPos, Y_AXIS_TOP_SPACE, axisPos, axisSize - 1);
 			drawUpArrow(ctx, axisPos, Y_AXIS_TOP_SPACE, Math.min(ARROW_SIZE, axisSize - 2));
@@ -374,6 +379,9 @@ public class AWTChartToolkit {
 				}
 			}
 		}
+
+		// Restore original paint after drawing the axis
+		ctx.setPaint(originalPaint);
 	}
 
 	private static void drawUpArrow(Graphics2D ctx, int axisX, int axisYTop, int size) {
