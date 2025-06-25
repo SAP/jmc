@@ -210,10 +210,17 @@ public class SapAgent {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
 
 		// We merge into a dummy which is guaranteed to contain all the stuff we expect.
-		// Thanks to spotless for forcing this to look like shit.
-		String DUMMY = "<jfragent>\n" + "    <config>\n" + "        <classprefix>__JFREvent</classprefix>\n"
-				+ "        <allowtostring>false</allowtostring>\n" + "        <allowconverter>false</allowconverter>\n"
-				+ "    </config>\n" + "    <events>\n" + "    </events>\n" + "</jfragent>\n";
+		// spotless:off
+		String DUMMY = "<jfragent>\n"
+		             + "    <config>\n"
+				     + "        <classprefix>__JFREvent</classprefix>\n"
+				     + "        <allowtostring>false</allowtostring>\n"
+				     + "        <allowconverter>false</allowconverter>\n"
+				     + "    </config>\n"
+				     + "    <events>\n"
+				     + "    </events>\n"
+				     + "</jfragent>\n";
+		// spotless:on
 
 		Document base = factory.newDocumentBuilder()
 				.parse(new ByteArrayInputStream(DUMMY.getBytes(StandardCharsets.UTF_8)));
