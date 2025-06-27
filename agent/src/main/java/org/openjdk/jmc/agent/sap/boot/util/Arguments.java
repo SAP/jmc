@@ -75,8 +75,7 @@ public class Arguments {
 				return opts[0];
 			}
 
-			throw new RuntimeException(
-					"Found " + opts.length + " values for option '" + option + "'. Expected only one.");
+			reportOptionError(option, "Found " + opts.length + " values for option. Expected only one.");
 		}
 
 		return defaultResult;
@@ -112,7 +111,6 @@ public class Arguments {
 				return Integer.parseInt(getString(option, ""));
 			} catch (NumberFormatException e) {
 				reportOptionError(option, "Could not parse integer value");
-				System.exit(1);
 			}
 		}
 

@@ -120,13 +120,13 @@ public class UnsafeAllocationTest extends TestBase {
 		try {
 			a1 = allocateMemory(1L << 56); // Should fail.
 		} catch (OutOfMemoryError e) {
-			// Excpected.
+			// Expected.
 		}
 
 		try {
 			a1 = reallocateMemory(a1, 1L << 56); // Should fail.
 		} catch (OutOfMemoryError e) {
-			// Excpected.
+			// Expected.
 		}
 
 		a1 = allocateMemory(4027);

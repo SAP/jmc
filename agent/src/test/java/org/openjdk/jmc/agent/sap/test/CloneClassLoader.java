@@ -137,7 +137,7 @@ public class CloneClassLoader extends SecureClassLoader {
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		if (notLoadable.contains(name)) {
-			throw new ClassNotFoundException("The clone class loader explicitely " + "didn't found the class");
+			throw new ClassNotFoundException("The clone class loader explicitly didn't find the class '" + name + "'");
 		}
 
 		if (simpleDelegate.contains(name)) {

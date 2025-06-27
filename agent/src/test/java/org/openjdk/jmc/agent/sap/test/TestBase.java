@@ -56,7 +56,7 @@ public abstract class TestBase {
 					Method m = this.getClass().getDeclaredMethod(args[0]);
 					m.invoke(this);
 				} catch (NoSuchMethodException e) {
-					throw new RuntimeException("Indefined test '" + args[0] + "'");
+					throw new RuntimeException("Undefined test '" + args[0] + "'");
 				}
 			}
 		} catch (RuntimeException e) {

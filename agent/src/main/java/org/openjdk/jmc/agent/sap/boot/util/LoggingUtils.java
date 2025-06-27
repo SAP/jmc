@@ -41,8 +41,8 @@ public class LoggingUtils {
 
 	public static void addOptions(Command command) {
 		command.addOption(LOG_DEST,
-				"Specifies where the output shows up. Can be 'stdout', 'stderr', 'none' or a file name. "
-						+ "Prepend the filename with a '+' to append to the file intead of overwriting it.");
+				"Specifies the output destination. Can be 'stdout', 'stderr', 'none' or a file name. "
+						+ "Prepend the filename with a '+' to append to the file instead of overwriting it.");
 		command.addOption(LOG_WITH_STACK, "If true, print a stack trace for every log output.");
 	}
 
@@ -112,9 +112,9 @@ public class LoggingUtils {
 			try {
 				if (dest.startsWith("+")) {
 					// Append if the file name starts with a +.
-					result = new PrintStream(new FileOutputStream(dest.substring(1), true));
+					result = new PrintStream(new FileOutputStream(dest.substring(1), true), true);
 				} else {
-					result = new PrintStream(new FileOutputStream(dest, false));
+					result = new PrintStream(new FileOutputStream(dest, false), true);
 				}
 			} catch (FileNotFoundException e) {
 				System.err.println("Could not open file '" + dest + "' for output. Using stderr instead.");

@@ -126,8 +126,8 @@
                         <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openRandomAccessFile()V</converter>
                     </parameter>
                     <parameter index="1">
-                        <name>append</name>
-                        <description>The append flag</description>
+                        <name>mode</name>
+                        <description>The file mode</description>
                         <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openRandomAccessFileMode()V</converter>
                     </parameter>
                 </parameters>

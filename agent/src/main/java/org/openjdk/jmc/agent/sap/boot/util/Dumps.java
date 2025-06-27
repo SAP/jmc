@@ -79,7 +79,7 @@ public class Dumps {
 		}
 
 		if (callback == null) {
-			System.err.println("No dump registered for dumType='" + type + "'");
+			System.err.println("No dump registered for dump type '" + type + "'");
 			return;
 		}
 
