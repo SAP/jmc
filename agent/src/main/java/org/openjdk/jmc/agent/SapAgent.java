@@ -230,7 +230,7 @@ public class SapAgent {
 
 		for (String part : parts) {
 			if (part.equals("help")) {
-				configProp.append(part).append(',');
+				configProp.append("help=true,");
 			} else if (part.startsWith(GenericLogger.GENERIC_COMMAND_PREFIX)) {
 				// Do nothing, just pick up the options and make sure the converter is accessible.
 				configProp = addCommandOptions(configName, configProp);

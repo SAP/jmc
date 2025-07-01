@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.Properties;
 
 // You can run it via (if the cwd is the agent directory):
-// java -javaagent:target/agent-1.0.1-SNAPSHOT.jar=traceSysPropsChange -cp target/test-classes org.openjdk.jmc.agent.sap.test.SystemPropertiesChanger
+// java -javaagent:target/agent-1.0.1-SNAPSHOT.jar=traceSysPropsChange -cp target/test-classes org.openjdk.jmc.agent.sap.test.SysPropsChangeTest
 public class SysPropsChangeTest extends TestBase {
 
 	public static void main(String[] args) {
@@ -44,6 +44,13 @@ public class SysPropsChangeTest extends TestBase {
 				"System property 'TEST_KEY' changed from 'null' to 'TEST_VAL'",
 				"System properties 'TEST_KEY' with value 'TEST_VAL' removed", SysPropsChangeTest.class.getName());
 		assertLinesNotContainsRegExp(runner.getStdoutLines(), "TEST_KEY_NO_SYS");
+
+		// Check if we get help
+		runner = getRunner("traceSysPropsChange,help");
+		runner.start("changeSystemProps");
+		runner.waitForEnd();
+		assertLinesContains(runner.getStderrLines(), "Help for command 'traceSysPropsChange'",
+				"Traces changes to the system properties", "logWithStack");
 	}
 
 	public static void changeSystemProps() {
