@@ -61,5 +61,6 @@ public class SysPropsChangeTest extends TestBase {
 		props.put("TEST_KEY_NO_SYS", "TEST_ADD_VALUE");
 		props.setProperty("TEST_KEY_NO_SYS", "TEST_CHANGE_VALUE");
 		props.remove("TEST_KEY_NO_SYS");
+		props.remove("TEST_KEY_NO_SYS");
 	}
 }

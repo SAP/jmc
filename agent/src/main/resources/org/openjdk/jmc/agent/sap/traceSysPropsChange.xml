@@ -30,9 +30,15 @@
             </method>
             <fields>
                 <field>
-                    <name>isSystemProperties</name>
+                    <name>oldValue</name>
                     <expression>this</expression>
-                    <description>Is this change for the System properties</description>
+                    <description>The old value</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logOldValue()V</converter>
+                </field>
+                <field>
+                    <name>isSystemProperty</name>
+                    <expression>this</expression>
+                    <description>Is this change for a System property</description>
                     <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logProperties()V</converter>
                 </field>
             </fields>
@@ -57,9 +63,15 @@
             </method>
             <fields>
                 <field>
-                    <name>isSystemProperties</name>
+                    <name>removedValue</name>
                     <expression>this</expression>
-                    <description>Is this change for the System properties</description>
+                    <description>The value of the removed property</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logOldValue()V</converter>
+                </field>
+                <field>
+                    <name>isSystemProperty</name>
+                    <expression>this</expression>
+                    <description>Is this change for a System property</description>
                     <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logProperties()V</converter>
                 </field>
             </fields>

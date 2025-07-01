@@ -48,6 +48,13 @@ public class SystemPropChangeLogger {
 	private static final ThreadLocal<String> usedKey = new ThreadLocal<String>();
 	private static final ThreadLocal<String> usedValue = new ThreadLocal<String>();
 
+	// This is just used to get the old value in the JFR event too.
+	public static String logOldValue(Properties props) {
+		String key = usedKey.get();
+
+		return props.getProperty(key);
+	}
+
 	public static boolean logProperties(Properties props) {
 		Arguments args = holder.get();
 		String key = usedKey.get();
