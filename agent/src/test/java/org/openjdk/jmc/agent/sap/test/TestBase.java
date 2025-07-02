@@ -24,8 +24,13 @@
 
 package org.openjdk.jmc.agent.sap.test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
+
+import org.openjdk.jmc.agent.test.util.OutputReader;
 
 public abstract class TestBase {
 
@@ -70,6 +75,47 @@ public abstract class TestBase {
 		return new JavaAgentRunner(getClass(), options, vmArgs);
 	}
 
+	private static File getJfrFile() {
+		File outputDir = new File("target", "output");
+
+		if (!outputDir.exists()) {
+			outputDir.mkdir();
+		}
+
+		return new File(outputDir, "test.jfr").getAbsoluteFile();
+	}
+
+	public JavaAgentRunner getRunnerWithJFR(String options, String ... vmArgs) {
+		File jfrFile = getJfrFile();
+		jfrFile.delete();
+
+		String[] newVmArgs = new String[vmArgs.length + 1];
+		System.arraycopy(vmArgs, 0, newVmArgs, 0, vmArgs.length);
+		newVmArgs[vmArgs.length] = "-XX:StartFlightRecording=filename=" + jfrFile.getPath();
+
+		return new JavaAgentRunner(getClass(), options, newVmArgs);
+	}
+
+	public String[] getJfrOutput(String idFilter) throws IOException, InterruptedException {
+		File jfrFile = getJfrFile();
+
+		if (!jfrFile.exists()) {
+			throw new FileNotFoundException(jfrFile.getPath());
+		}
+
+		ProcessBuilder pb = new ProcessBuilder("jfr", "print", "--events", "\"" + idFilter + "\"", jfrFile.getPath());
+		Process process = pb.start();
+		StringBuilder output = new StringBuilder();
+		OutputReader reader = new OutputReader(process.getInputStream(), output);
+		Thread worker = new Thread(reader);
+		worker.setDaemon(true);
+		worker.start();
+		process.waitFor();
+		worker.join();
+
+		return reader.getLines();
+	}
+
 	protected abstract void runAllTests() throws Exception;
 
 	private static void failLines(String[] lines, String msg) {
@@ -108,6 +154,23 @@ public abstract class TestBase {
 
 			failLines(lines, "Could not find '" + substring + "' in the lines");
 		}
+	}
+
+	public static void assertLinesContainsInOrder(String[] lines, String ... substrings) {
+		int index = 0;
+		for (String line : lines) {
+			String substring = substrings[index];
+
+			if (line.indexOf(substring) >= 0) {
+				++index;
+
+				if (index == substrings.length) {
+					return;
+				}
+			}
+		}
+
+		failLines(lines, "Could not find '" + substrings[index] + "' in the lines");
 	}
 
 	public static void assertLinesContainsRegExp(String[] lines, String ... regexps) {

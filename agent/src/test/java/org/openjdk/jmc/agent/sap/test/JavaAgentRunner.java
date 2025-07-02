@@ -27,12 +27,12 @@ package org.openjdk.jmc.agent.sap.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+import org.openjdk.jmc.agent.test.util.OutputReader;
 
 public class JavaAgentRunner {
 
@@ -255,21 +255,11 @@ public class JavaAgentRunner {
 	}
 
 	public String[] getStdoutLines() {
-		return getLines(stdout);
+		return OutputReader.getLines(stdout);
 	}
 
 	public String[] getStderrLines() {
-		return getLines(stderr);
-	}
-
-	private String[] getLines(StringBuilder out) {
-		String raw;
-
-		synchronized (out) {
-			raw = out.toString();
-		}
-
-		return raw.split("[\r\n]+");
+		return OutputReader.getLines(stderr);
 	}
 
 	private void dumpLines(StringBuilder sb) {
@@ -394,39 +384,6 @@ public class JavaAgentRunner {
 				} catch (InterruptedException e) {
 					// Ignore.
 				}
-			}
-		}
-	}
-
-	private static class OutputReader implements Runnable {
-		private final StringBuilder out;
-		private final InputStream is;
-
-		public OutputReader(InputStream is, StringBuilder out) {
-			this.is = is;
-			this.out = out;
-		}
-
-		public void run() {
-			try {
-				byte[] buf = new byte[8192];
-				int read;
-
-				while ((read = is.read(buf)) > 0) {
-
-					if (read > 0) {
-						byte[] part = new byte[read];
-						System.arraycopy(buf, 0, part, 0, read);
-						String toAppend = new String(part, StandardCharsets.ISO_8859_1);
-
-						synchronized (out) {
-							out.append(toAppend);
-							out.notifyAll();
-						}
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}

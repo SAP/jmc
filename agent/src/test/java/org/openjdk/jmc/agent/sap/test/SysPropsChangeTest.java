@@ -37,16 +37,20 @@ public class SysPropsChangeTest extends TestBase {
 
 	@Override
 	protected void runAllTests() throws Exception {
-		JavaAgentRunner runner = getRunner("traceSysPropsChange,logDest=stdout");
+		JavaAgentRunner runner = getRunnerWithJFR("traceSysPropsChange,logDest=stdout");
 		runner.start("changeSystemProps");
 		runner.waitForEnd();
 		assertLinesContainsRegExp(runner.getStdoutLines(),
 				"System property 'TEST_KEY' changed from 'null' to 'TEST_VAL'",
 				"System properties 'TEST_KEY' with value 'TEST_VAL' removed", SysPropsChangeTest.class.getName());
 		assertLinesNotContainsRegExp(runner.getStdoutLines(), "TEST_KEY_NO_SYS");
+		assertLinesContainsInOrder(getJfrOutput("jdk.log.*"), "fieldValue = \"TEST_VAL\"", "OldValue = N/A",
+				"IsSystemProperty = true", "RemovedValue = \"TEST_VAL\"", "IsSystemProperty = true", "OldValue = N/A",
+				"IsSystemProperty = false", "OldValue = \"TEST_ADD_VALUE\"", "RemovedValue = \"TEST_CHANGE_VALUE\"",
+				"RemovedValue = N/A");
 
 		// Check if we get help
-		runner = getRunner("traceSysPropsChange,help");
+		runner = getRunner("traceSysPropsChange,help", "-XX:StartFlightRecording=filename=test.jfr");
 		runner.start("changeSystemProps");
 		runner.waitForEnd();
 		assertLinesContains(runner.getStderrLines(), "Help for command 'traceSysPropsChange'",
