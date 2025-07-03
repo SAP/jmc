@@ -233,8 +233,7 @@ public class FileOpenCloseLogger {
 				}
 			}
 
-			LoggingUtils.log(args, "File '" + entry.path + "', mode '" + entry.mode + "'");
-			LoggingUtils.logStack(args, entry.stack, 1);
+			LoggingUtils.logWithStack(args, "File '" + entry.path + "', mode '" + entry.mode + "'", entry.stack, 1);
 			printed += 1;
 		}
 

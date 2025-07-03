@@ -153,20 +153,26 @@ public class LoggingUtils {
 	}
 
 	private static void logCurrentStack(Arguments args, int toSkip) {
-		logStack(args, new Exception(), toSkip);
+		logWithStack(args, "", new Exception(), toSkip);
 	}
 
 	public static void logWithStack(Arguments args, String msg, int toSkip) {
-		getStream(args).println(msg);
-		logStack(args, new Exception(), toSkip);
+		logWithStack(args, msg, new Exception(), toSkip);
 	}
 
-	public static void logStack(Arguments args, Exception stack, int toSkip) {
+	public static void logWithStack(Arguments args, String msg, Exception stack, int toSkip) {
 		PrintStream stream = getStream(args);
-		StackTraceElement[] frames = stack.getStackTrace();
 
-		for (int i = toSkip; i < frames.length; ++i) {
-			stream.println("\t" + frames[i]);
+		if (msg.length() > 0) {
+			stream.println(msg);
+		}
+
+		if (args.getBoolean(LOG_WITH_STACK, true)) {
+			StackTraceElement[] frames = stack.getStackTrace();
+
+			for (int i = toSkip; i < frames.length; ++i) {
+				stream.println("\t" + frames[i]);
+			}
 		}
 	}
 }
