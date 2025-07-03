@@ -43,7 +43,7 @@ public class LoggingUtils {
 		command.addOption(LOG_DEST,
 				"Specifies the output destination. Can be 'stdout', 'stderr', 'none' or a file name. "
 						+ "Prepend the filename with a '+' to append to the file instead of overwriting it.");
-		command.addOption(LOG_WITH_STACK, "If true, print a stack trace for every log output.");
+		command.addOption(LOG_WITH_STACK, "If not false, print a stack trace for every log output.");
 	}
 
 	public static void addOptionsWithStack(Command command) {
