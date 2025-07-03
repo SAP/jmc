@@ -103,7 +103,7 @@ public abstract class TestBase {
 			throw new FileNotFoundException(jfrFile.getPath());
 		}
 
-		ProcessBuilder pb = new ProcessBuilder("jfr", "print", "--events", "\"" + idFilter + "\"", jfrFile.getPath());
+		ProcessBuilder pb = new ProcessBuilder("jfr", "print", "--events", idFilter, jfrFile.getPath());
 		Process process = pb.start();
 		StringBuilder output = new StringBuilder();
 		OutputReader reader = new OutputReader(process.getInputStream(), output);
