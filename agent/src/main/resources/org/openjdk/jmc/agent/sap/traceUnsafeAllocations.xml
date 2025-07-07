@@ -41,7 +41,7 @@
                 <descriptor>(JJ)J</descriptor>
                 <parameters>
                     <parameter index="0">
-                        <name>address</name>
+                        <name>oldAddress</name>
                         <description>The old memory address</description>
                         <converter>org.openjdk.jmc.agent.sap.boot.converters.UnsafeMemoryAllocationLogger.logPtr()V</converter>
                     </parameter>
@@ -54,7 +54,7 @@
                 <returnvalue>
                     <name>address</name>
                     <description>the allocated address</description>
-                        <converter>org.openjdk.jmc.agent.sap.boot.converters.UnsafeMemoryAllocationLogger.logResult()V</converter>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.UnsafeMemoryAllocationLogger.logResult()V</converter>
                 </returnvalue>
             </method>
         </event>
