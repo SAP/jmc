@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 // You can run it via (if the cwd is the agent directory):
-// java -javaagent:target/agent-1.0.1-SNAPSHOT.jar=traceUnsafeAllocations -cp target/test-classes --add-opens java.base/jdk.internal.misc=ALL-UNNAMED org.openjdk.jmc.agent.sap.test.UnsafeAllocationTestRunner
+// java -cp target/test-classes org.openjdk.jmc.agent.sap.test.UnsafeAllocationTest
 public class UnsafeAllocationTest extends TestBase {
 
 	private static Method allocateMemoryMethod;

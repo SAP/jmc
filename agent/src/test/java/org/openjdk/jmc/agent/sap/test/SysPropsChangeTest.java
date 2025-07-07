@@ -28,7 +28,7 @@ import java.io.File;
 import java.util.Properties;
 
 // You can run it via (if the cwd is the agent directory):
-// java -javaagent:target/agent-1.0.1-SNAPSHOT.jar=traceSysPropsChange -cp target/test-classes org.openjdk.jmc.agent.sap.test.SysPropsChangeTest
+// java -cp target/test-classes org.openjdk.jmc.agent.sap.test.SysPropsChangeTest
 public class SysPropsChangeTest extends TestBase {
 
 	public static void main(String[] args) {
