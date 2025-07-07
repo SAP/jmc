@@ -49,7 +49,7 @@ public class SysPropsChangeTest extends TestBase {
 				"RemovedValue = N/A");
 
 		// Check if we can omit the stack.
-		runner = getRunnerWithJFR("traceSysPropsChange,logDest=stderr,logWithStack=false");
+		runner = getRunner("traceSysPropsChange,logDest=stderr,logWithStack=false");
 		runner.start("changeSystemProps");
 		runner.waitForEnd();
 		assertLinesContains(runner.getStderrLines(), "System property 'TEST_KEY' changed from 'null' to 'TEST_VAL'",

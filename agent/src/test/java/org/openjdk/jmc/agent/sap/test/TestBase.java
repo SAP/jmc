@@ -97,13 +97,18 @@ public abstract class TestBase {
 	}
 
 	public String[] getJfrOutput(String idFilter) throws IOException, InterruptedException {
+		return getJfrOutput(idFilter, 8);
+	}
+
+	public String[] getJfrOutput(String idFilter, int stackDepth) throws IOException, InterruptedException {
 		File jfrFile = getJfrFile();
 
 		if (!jfrFile.exists()) {
 			throw new FileNotFoundException(jfrFile.getPath());
 		}
 
-		ProcessBuilder pb = new ProcessBuilder("jfr", "print", "--events", idFilter, jfrFile.getPath());
+		ProcessBuilder pb = new ProcessBuilder("jfr", "print", "--stack-depth", "" + stackDepth, "--events", idFilter,
+				jfrFile.getPath());
 		Process process = pb.start();
 		StringBuilder output = new StringBuilder();
 		OutputReader reader = new OutputReader(process.getInputStream(), output);

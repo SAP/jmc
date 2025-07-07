@@ -39,6 +39,7 @@ public class UnsafeAllocationTest extends TestBase {
 	private static String DO_ALLOCS = "runRandomAllocs";
 	private static String DO_NATIVE_ALLOCS = "doNativeAllocs";
 	private static String DO_DELAYED_ALLOCS = "doDelayedAllocs";
+	private static String DO_NATIVE_ALLOCS_FOR_JFR = "doNativeAllocsForJfr";
 	private static long DELAY = 10;
 
 	private static void initUnsafe() {
@@ -61,6 +62,7 @@ public class UnsafeAllocationTest extends TestBase {
 
 	protected void runAllTests() throws Exception {
 		testNativeAllocs();
+		testNativeAllocsForJfr();
 
 		if (smokeTestsOnly()) {
 			return;
@@ -68,6 +70,37 @@ public class UnsafeAllocationTest extends TestBase {
 
 		testDelayedDumping();
 		testAgeFiltering();
+	}
+
+	public void testNativeAllocsForJfr() throws Exception {
+		JavaAgentRunner runner = getRunnerWithJFR("traceUnsafeAllocations", "--add-opens",
+				"java.base/jdk.internal.misc=ALL-UNNAMED");
+		runner.start(DO_NATIVE_ALLOCS_FOR_JFR);
+		runner.waitForEnd();
+		String[] lines = getJfrOutput("jdk.log.*", 16);
+
+		// Find the allocated addresses.
+		long m1 = -1;
+		long m2 = -1;
+
+		for (int i = 0; i < lines.length; ++i) {
+			String line = lines[i];
+
+			if (m1 == -1) {
+				if (line.endsWith("fieldSize = 12345")) {
+					m1 = Long.parseLong(lines[i + 1].split(" = ")[1]);
+				}
+			} else if (line.endsWith("fieldSize = 54321")) {
+				m2 = Long.parseLong(lines[i + 1].split(" = ")[1]);
+				break;
+			}
+		}
+
+		assertLinesContainsInOrder(lines, "jdk.log.unsafeMemoryAlloc", "fieldSize = 72057594037927936",
+				"fieldAddress = 0", "jdk.log.unsafeMemoryAlloc", "fieldSize = 12345", "fieldAddress = " + m1,
+				"jdk.log.unsafeMemoryRealloc", "fieldOldAddress = " + m1, "fieldSize = 144115188075855872",
+				"fieldAddress = 0", "jdk.log.unsafeMemoryRealloc", "fieldOldAddress = " + m1, "fieldSize = 54321",
+				"fieldAddress = " + m2, "jdk.log.unsafeMemoryFree", "fieldAddress = " + m2);
 	}
 
 	public void testNativeAllocs() throws IOException {
@@ -111,6 +144,27 @@ public class UnsafeAllocationTest extends TestBase {
 		runner.kill();
 		assertLinesContainsRegExp(runner.getStdoutLines(), "^Printed [0-9]+ of [0-9] allocations with [0-9]+ bytes",
 				"^Printed [0-9]+ of [0-9] allocations with [0-9]+ bytes");
+	}
+
+	public static void doNativeAllocsForJfr() {
+		initUnsafe();
+
+		try {
+			allocateMemory(1L << 56);
+		} catch (OutOfMemoryError e) {
+			// Expected
+		}
+
+		long m1 = allocateMemory(12345);
+
+		try {
+			reallocateMemory(m1, 1L << 57);
+		} catch (OutOfMemoryError e) {
+			// Expected
+		}
+
+		m1 = reallocateMemory(m1, 54321);
+		freeMemory(m1);
 	}
 
 	public static void doNativeAllocs() {
