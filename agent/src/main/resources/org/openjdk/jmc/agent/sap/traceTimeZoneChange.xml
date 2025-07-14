@@ -27,6 +27,16 @@
                         <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZoneIdChange()V</converter>
                     </parameter>
                     <parameter index="0">
+                        <name>oldTimeZone</name>
+                        <description>The old default time zone</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZone()V</converter>
+                    </parameter>
+                    <parameter index="0">
+                        <name>oldTimeZoneId</name>
+                        <description>The old default time zone id</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZoneId()V</converter>
+                    </parameter>
+                    <parameter index="0">
                         <name>changesDefault</name>
                         <description>Does this changes the default time zone, because it's not already the default</description>
                         <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.changesDefaultTimeZone()V</converter>

@@ -58,6 +58,14 @@ public class TimeZoneChangeLogger {
 		return newZone.toZoneId().getId();
 	}
 
+	public static String logDefaultTimeZone(TimeZone newZone) {
+		return TimeZone.getDefault().getDisplayName();
+	}
+
+	public static String logDefaultTimeZoneId(TimeZone newZone) {
+		return TimeZone.getDefault().toZoneId().getId();
+	}
+
 	public static boolean changesDefaultTimeZone(TimeZone newZone) {
 		return !newZone.toZoneId().equals(TimeZone.getDefault().toZoneId());
 	}
