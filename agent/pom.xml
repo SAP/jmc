@@ -93,7 +93,77 @@
 		<!-- Dependency Versions -->
 		<asm.version>9.8</asm.version>
 		<junit.version>4.13.2</junit.version>
+		<agent.name>Agent</agent.name>
 	</properties>
+	<!-- Profile for SapAgent -->
+	<profiles>
+		<profile>
+			<id>SapAgent</id>
+			<properties>
+				<agent.name>SapAgent</agent.name>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>${maven.jar.version}</version>
+						<executions>
+							<execution>
+								<id>boot-jar</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<classifier>boot</classifier>
+									<includes>
+										<include>org/openjdk/jmc/agent/sap/boot/**</include>
+									</includes>
+								</configuration>
+							</execution>
+							<execution>
+								<goals>
+									<goal>test-jar</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>org/openjdk/jmc/agent/sap/**</include>
+										<include>org/openjdk/jmc/agent/test/sap/**</include>
+									</includes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>${maven.failsafe.version}</version>
+						<executions>
+							<execution>
+								<id>test-sap-extensions</id>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+								<configuration>
+									<systemPropertyVariables>
+										<fullTest>${fullTest}</fullTest>
+										<dumpOutputToFile>${dumpOutputToFile}</dumpOutputToFile>
+										<debugPort>${debugPort}</debugPort>
+										<singleTest>${singleTest}</singleTest>
+									</systemPropertyVariables>
+									<argLine>
+									   -cp target/test-classes/
+									</argLine>
+									<includes>SapIntegrationTest.java</includes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<scm>
 		<connection>${scmConnection}</connection>
 	</scm>
@@ -214,8 +284,8 @@
 						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<manifestEntries>
 								<Automatic-Module-Name>org.openjdk.jmc.agent</Automatic-Module-Name>
-								<Agent-Class>org.openjdk.jmc.agent.SapAgent</Agent-Class>
-								<Premain-Class>org.openjdk.jmc.agent.SapAgent</Premain-Class>
+								<Agent-Class>org.openjdk.jmc.agent.${agent.name}</Agent-Class>
+								<Premain-Class>org.openjdk.jmc.agent.${agent.name}</Premain-Class>
 								<Can-Retransform-Classes>true</Can-Retransform-Classes>
 								<Bundle-RequiredExecutionEnvironment>JavaSE-17</Bundle-RequiredExecutionEnvironment>
 								<Built-By></Built-By>
@@ -234,59 +304,9 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.version}</version>
-				<executions>
-					<execution>
-						<id>boot-jar</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>boot</classifier>
-							<includes>
-								<include>org/openjdk/jmc/agent/sap/boot/**</include>
-							</includes>
-						</configuration>
-					</execution>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-						<configuration>
-							<classifier>sap-tests</classifier>
-							<includes>
-								<include>org/openjdk/jmc/agent/sap/**</include>
-								<include>org/openjdk/jmc/agent/test/sap/**</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.version}</version>
 				<executions>
-					<execution>
-						<id>test-sap-extensions</id>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<systemPropertyVariables>
-								<fullTest>${fullTest}</fullTest>
-								<dumpOutputToFile>${dumpOutputToFile}</dumpOutputToFile>
-								<debugPort>${debugPort}</debugPort>
-								<singleTest>${singleTest}</singleTest>
-							</systemPropertyVariables>
-							<argLine>
-							   -cp target/test-classes/
-							</argLine>
-							<includes>SapIntegrationTest.java</includes>
-						</configuration>
-					</execution>
 					<execution>
 						<id>test-permissions</id>
 						<goals>

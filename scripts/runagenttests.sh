@@ -3,5 +3,6 @@ set -e
 
 echo "======== Building and testing agent ========="
 cd agent
-sh -c "mvn -DfullTest=true ${MAVENPARAMS} verify"
+sh -c "mvn ${MAVENPARAMS} verify"
+sh -c "mvn -P SapAgent -DfullTest=true ${MAVENPARAMS} verify"
 echo "======== Finished ==========================="
