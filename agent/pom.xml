@@ -101,6 +101,7 @@
 			<id>SapAgent</id>
 			<properties>
 				<agent.name>SapAgent</agent.name>
+				<revision>0.9.0</revision>
 			</properties>
 			<build>
 				<plugins>

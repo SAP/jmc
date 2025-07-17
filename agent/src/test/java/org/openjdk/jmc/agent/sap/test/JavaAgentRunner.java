@@ -26,11 +26,14 @@ package org.openjdk.jmc.agent.sap.test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.openjdk.jmc.agent.test.util.OutputReader;
 
@@ -49,7 +52,6 @@ public class JavaAgentRunner {
 	private static int debugPort = -1;
 	private static int MAX_WAIT_TIME = 60;
 
-	private static final String AGENT_NAME = "agent-1.0.1-SNAPSHOT.jar";
 	private static final boolean dumpOutputToFile = Boolean.getBoolean("dumpOutputToFile");
 	private static final boolean useJmcAgentOption = Boolean.getBoolean("useJmcAgentOption");
 	private static final boolean traceExecs = Boolean.getBoolean("traceExecs");
@@ -102,26 +104,22 @@ public class JavaAgentRunner {
 	}
 
 	private static String getAgent() {
-		File file = new File(AGENT_NAME);
-
-		if (file.exists()) {
-			return file.getAbsolutePath();
-		}
-
-		file = new File("target" + File.separator + AGENT_NAME);
-
-		if (file.exists()) {
-			return file.getAbsolutePath();
-		}
-
+		Pattern pattern = Pattern.compile("^agent-[0-9]+[.][0-9]+[.][0-9]+(-SNAPSHOT)?[.]jar$");
 		String javaHome = System.getProperty("java.home");
-		file = new File(javaHome + File.separator + "lib" + File.separator + AGENT_NAME);
+		String[] toSearch = new String[] {".", "target", javaHome + File.separator + "lib"};
+		FilenameFilter filter = (File dir, String name) -> pattern.matcher(name).matches();
 
-		if (file.exists()) {
-			return file.getAbsolutePath();
+		for (String dir : toSearch) {
+			File[] files = new File(dir).listFiles(filter);
+
+			if (files.length == 1) {
+				return files[0].getAbsolutePath();
+			} else if (files.length > 1) {
+				throw new RuntimeException("Found more than one agent: " + Arrays.toString(files));
+			}
 		}
 
-		throw new RuntimeException("Could not find agent " + AGENT_NAME + " (WD " + System.getProperty("user.dir"));
+		throw new RuntimeException("Could not find agent in " + Arrays.toString(toSearch));
 	}
 
 	private static String getExe(String name) {
