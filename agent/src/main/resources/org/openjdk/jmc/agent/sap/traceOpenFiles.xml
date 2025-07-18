@@ -1,0 +1,166 @@
+<jfragent>
+    <config>
+        <classprefix>__JFREvent</classprefix>
+        <allowtostring>false</allowtostring>
+        <allowconverter>true</allowconverter>
+    </config>
+    <events>
+        <event id="jdk.log.fileInputStreamOpen">
+            <label>fileInputStreamOpen</label>
+            <description>Traces the FileInputStream constructor taking a File</description>
+            <class>java.io.FileInputStream</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <location>EXIT</location>
+            <path>jdk/log/file/statistic</path>
+            <method>
+                <name>FileInputStream</name>
+                <descriptor>(Ljava/io/File;)V</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>fileName</name>
+                        <description>The file name</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openFileInputStream()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+            <fields>
+                <field>
+                    <name>hasOpened</name>
+                    <expression>this</expression>
+                    <description>has the file been opened</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openFileInputStream()V</converter>
+                </field>
+            </fields>
+        </event>
+        <event id="jdk.log.fileInputStreamClose">
+            <label>fileInputStreamClose</label>
+            <description>Traces the FileInputStream close calls</description>
+            <class>java.io.FileInputStream</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <location>ENTRY</location>
+            <path>jdk/log/file/statistic</path>
+            <method>
+                <name>close</name>
+                <descriptor>()V</descriptor>
+            </method>
+            <fields>
+                <field>
+                    <name>closedFile</name>
+                    <expression>this</expression>
+                    <description>The closed file</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.closeFileInputStream()V</converter>
+                </field>
+            </fields>
+        </event>
+        <event id="jdk.log.fileOutputStreamOpen">
+            <label>fileOutputStreamOpen</label>
+            <description>Traces the FileOutputStream constructor taking a File</description>
+            <class>java.io.FileOutputStream</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <location>EXIT</location>
+            <path>jdk/log/file/statistic</path>
+            <method>
+                <name>FileOutputStream</name>
+                <descriptor>(Ljava/io/File;Z)V</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>fileName</name>
+                        <description>The file name</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openFileOutputStream()V</converter>
+                    </parameter>
+                    <parameter index="1">
+                        <name>append</name>
+                        <description>The append flag</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openFileOutputStream()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+            <fields>
+                <field>
+                    <name>hasOpened</name>
+                    <expression>this</expression>
+                    <description>has the file been opened</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openFileOutputStream()V</converter>
+                </field>
+            </fields>
+        </event>
+        <event id="jdk.log.fileOutputStreamClose">
+            <label>fileOutputStreamClose</label>
+            <description>Traces the FileOutputStream close calls</description>
+            <class>java.io.FileOutputStream</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <location>ENTRY</location>
+            <path>jdk/log/file/statistic</path>
+            <method>
+                <name>close</name>
+                <descriptor>()V</descriptor>
+            </method>
+            <fields>
+                <field>
+                    <name>closedFile</name>
+                    <expression>this</expression>
+                    <description>The closed file</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.closeFileOutputStream()V</converter>
+                </field>
+            </fields>
+        </event>
+        <event id="jdk.log.randomAccessFileOpen">
+            <label>randomAccessFileOpen</label>
+            <description>Traces the RandomAccessFile constructor taking a File</description>
+            <class>java.io.RandomAccessFile</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <location>EXIT</location>
+            <path>jdk/log/file/statistic</path>
+            <method>
+                <name>RandomAccessFile</name>
+                <descriptor>(Ljava/io/File;Ljava/lang/String;)V</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>fileName</name>
+                        <description>The file name</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openRandomAccessFile()V</converter>
+                    </parameter>
+                    <parameter index="1">
+                        <name>mode</name>
+                        <description>The file mode</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openRandomAccessFileMode()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+            <fields>
+                <field>
+                    <name>hasOpened</name>
+                    <expression>this</expression>
+                    <description>has the file been opened</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.openRandomAccessFile()V</converter>
+                </field>
+            </fields>
+        </event>
+        <event id="jdk.log.randomAccessFileClose">
+            <label>randomAccessFileClose</label>
+            <description>Traces the RandomAccessFile close call</description>
+            <class>java.io.RandomAccessFile</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <location>EXIT</location>
+            <path>jdk/log/file/statistic</path>
+            <method>
+                <name>close</name>
+                <descriptor>()V</descriptor>
+            </method>
+            <fields>
+                <field>
+                    <name>closedFile</name>
+                    <expression>this</expression>
+                    <description>The closed file</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.FileOpenCloseLogger.closeRandomAccessFile()V</converter>
+                </field>
+            </fields>
+        </event>
+    </events>
+</jfragent>
