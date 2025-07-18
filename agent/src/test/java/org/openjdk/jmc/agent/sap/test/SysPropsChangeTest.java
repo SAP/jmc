@@ -57,7 +57,7 @@ public class SysPropsChangeTest extends TestBase {
 		assertLinesNotContains(runner.getStderrLines(), SysPropsChangeTest.class.getName());
 
 		// Check if we get help
-		runner = getRunner("traceSysPropsChange,help", "-XX:StartFlightRecording=filename=test.jfr");
+		runner = getRunner("traceSysPropsChange,help");
 		runner.start("changeSystemProps");
 		runner.waitForEnd();
 		assertLinesContains(runner.getStderrLines(), "Help for command 'traceSysPropsChange'",
