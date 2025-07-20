@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
-import org.openjdk.jmc.agent.test.util.OutputReader;
-
 public abstract class TestBase {
 
 	private static boolean smokeTestsOnly;

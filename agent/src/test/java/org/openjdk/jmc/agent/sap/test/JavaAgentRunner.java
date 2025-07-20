@@ -35,8 +35,6 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.openjdk.jmc.agent.test.util.OutputReader;
-
 public class JavaAgentRunner {
 
 	private final String classToRun;
