@@ -49,6 +49,7 @@ public class JavaAgentRunner {
 	private static boolean dumpOnExit;
 	private static int debugPort = -1;
 	private static int MAX_WAIT_TIME = 60;
+	private static String[] additionalVmArgs = new String[0];
 
 	private static final boolean dumpOutputToFile = Boolean.getBoolean("dumpOutputToFile");
 	private static final boolean useJmcAgentOption = Boolean.getBoolean("useJmcAgentOption");
@@ -62,6 +63,10 @@ public class JavaAgentRunner {
 		this.stderr = new StringBuilder();
 	}
 
+	public static void setAdditionalVmArgs(String[] args) {
+		additionalVmArgs = args;
+	}
+
 	private ArrayList<String> getArgs(String[] javaArgs) {
 		ArrayList<String> args = new ArrayList<>();
 		args.add(getExe("java"));
@@ -72,6 +77,10 @@ public class JavaAgentRunner {
 			args.add("-jmcagent:" + options);
 		} else {
 			args.add("-javaagent:" + getAgent() + "=" + options);
+		}
+
+		for (String vmArg : additionalVmArgs) {
+			args.add(vmArg);
 		}
 
 		args.add("-cp");
