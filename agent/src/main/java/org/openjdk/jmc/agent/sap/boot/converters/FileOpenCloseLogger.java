@@ -55,7 +55,7 @@ public class FileOpenCloseLogger {
 		// spotless:off
 		dumpCommand = new Command(
 				"openFiles", "Dump the currently files opened by Java code.",
-				MUST_CONTAIN, "A regexp which must the file name to be printed.",
+				MUST_CONTAIN, "A regexp which must match the file name to be printed.",
 				MUST_NOT_CONTAIN, "A regexp which must not match the file name to be printed.");
 		command = new Command(dumpCommand,
 				"traceOpenFiles", "Traces files opened by Java code.") {

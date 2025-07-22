@@ -151,11 +151,7 @@ public class SapAgent {
 
 		System.err.println("Agent base file: " + file);
 
-		String os = AccessController.doPrivileged(new PrivilegedAction<String>() {
-			public String run() {
-				return System.getProperty("os.name");
-			}
-		});
+		String os = AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty("os.name"));
 		int skip = os.toLowerCase().startsWith("win") ? 6 : 5;
 		String jar = file.substring(skip, file.indexOf(".jar!")) + "-boot.jar";
 

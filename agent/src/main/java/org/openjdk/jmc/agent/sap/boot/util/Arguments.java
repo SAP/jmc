@@ -144,7 +144,7 @@ public class Arguments {
 			try {
 				return Double.parseDouble(getString(option, ""));
 			} catch (NumberFormatException e) {
-				reportOptionError(option, "Could not parse integer value");
+				reportOptionError(option, "Could not parse floating point value");
 			}
 		}
 
