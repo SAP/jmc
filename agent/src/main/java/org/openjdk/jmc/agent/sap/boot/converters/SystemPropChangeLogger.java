@@ -34,11 +34,8 @@ import org.openjdk.jmc.agent.sap.boot.util.LoggingUtils;
 import org.openjdk.jmc.agent.sap.boot.util.OutputCommand;
 
 public class SystemPropChangeLogger {
-	private static final Properties systemProps = AccessController.doPrivileged(new PrivilegedAction<Properties>() {
-		public Properties run() {
-			return System.getProperties();
-		}
-	});
+	private static final Properties systemProps = AccessController
+			.doPrivileged((PrivilegedAction<Properties>) () -> System.getProperties());
 
 	public static final OutputCommand command = new OutputCommand("traceSysPropsChange",
 			"Traces changes to the system properties.");

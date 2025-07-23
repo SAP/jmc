@@ -45,7 +45,7 @@ public class TimeZoneChangeLogger {
 	public static String logDefaultTimeZoneChange(TimeZone newZone) {
 		String result = newZone.getDisplayName();
 
-		// If this same, don't log it.
+		// If this doesn't changes the default time zone, don't log it.
 		if (changesDefaultTimeZone(newZone)) {
 			LoggingUtils.logWithStack(holder.get(),
 					"Changed default time zone to " + result + " (" + newZone.toZoneId().toString() + ").", 2);
