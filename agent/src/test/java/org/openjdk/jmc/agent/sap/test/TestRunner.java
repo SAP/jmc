@@ -40,6 +40,7 @@ public class TestRunner {
 
 	public static void main(String[] args) throws Exception {
 		ArrayList<String> leftArgs = new ArrayList<>(Arrays.asList(args));
+		boolean vmAgnosticTests = false;
 
 		while (leftArgs.size() > 0) {
 			String first = leftArgs.get(0);
@@ -57,6 +58,9 @@ public class TestRunner {
 				leftArgs.remove(0);
 			} else if (first.equals("-smoke")) {
 				TestBase.setSmokeTestOnly();
+				leftArgs.remove(0);
+			} else if (first.endsWith("-vm-agnostic-tests")) {
+				vmAgnosticTests = true;
 				leftArgs.remove(0);
 			} else {
 				break;
@@ -76,6 +80,12 @@ public class TestRunner {
 						run = true;
 						toRun.remove(arg);
 					}
+				}
+			}
+
+			if (vmAgnosticTests) {
+				if (!VmAgnostic.class.isAssignableFrom(testClass)) {
+					continue;
 				}
 			}
 

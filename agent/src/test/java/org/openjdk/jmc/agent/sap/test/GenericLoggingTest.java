@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-public class GenericLoggingTest extends TestBase {
+public class GenericLoggingTest extends TestBase implements VmAgnostic {
 
 	public static void main(String[] args) {
 		new GenericLoggingTest().dispatch(args);
