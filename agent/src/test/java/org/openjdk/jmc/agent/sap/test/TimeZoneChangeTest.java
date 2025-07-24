@@ -42,9 +42,10 @@ public class TimeZoneChangeTest extends TestBase {
 		JavaAgentRunner runner = getRunner("traceTimeZoneChange,logDest=stdout");
 		runner.start("changeTimeZones");
 		runner.waitForEnd();
-		assertLinesContains(runner.getStdoutLines(), "Changed default time zone to Central European Time (CET)",
-				"Changed default time zone to Greenwich Mean Time (Etc/GMT+0)",
-				"Changed default time zone to Central European Standard Time (Europe/Berlin).");
+		assertLinesContainsRegExp(runner.getStdoutLines(),
+				"Changed default time zone to Central European.* Time [(]CET[)]",
+				"Changed default time zone to Greenwich Mean Time [(]Etc/GMT+0[)]",
+				"Changed default time zone to Central European Standard Time [(]Europe/Berlin[)].");
 		runner = getRunnerWithJFR("traceTimeZoneChange,logDest=stdout");
 		runner.start("changeForJFR");
 		runner.waitForEnd();
