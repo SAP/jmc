@@ -63,8 +63,10 @@ public class TimeZoneChangeTest extends TestBase {
 	public void changeTimeZones() {
 		TimeZone.setDefault(TimeZone.getDefault());
 
-		for (String id : TimeZone.getAvailableIDs()) {
-			TimeZone.setDefault(TimeZone.getTimeZone(id));
+		for (int i = 0; i < 2; ++i) {
+			for (String id : TimeZone.getAvailableIDs()) {
+				TimeZone.setDefault(TimeZone.getTimeZone(id));
+			}
 		}
 	}
 
