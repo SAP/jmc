@@ -32,6 +32,9 @@ import java.util.regex.Pattern;
 
 public abstract class TestBase {
 
+	private int jfrFileIndex = 1;
+	private File jfrFile = null;
+
 	private static boolean smokeTestsOnly;
 	public static String DONE = "DONE";
 	public static long MAX_TEST_CASE_DURATION = 5 * 60;
@@ -73,18 +76,21 @@ public abstract class TestBase {
 		return new JavaAgentRunner(getClass(), options, vmArgs);
 	}
 
-	private static File getJfrFile() {
+	private File getNewJfrFile() {
 		File outputDir = new File("target", "output");
 
 		if (!outputDir.exists()) {
-			outputDir.mkdir();
+			outputDir.mkdirs();
 		}
 
-		return new File(outputDir, "test.jfr").getAbsoluteFile();
+		jfrFile = new File(outputDir, getClass().getName().replace('.', '_') + jfrFileIndex + ".jfr").getAbsoluteFile();
+		jfrFileIndex += 1;
+
+		return jfrFile;
 	}
 
 	public JavaAgentRunner getRunnerWithJFR(String options, String ... vmArgs) {
-		File jfrFile = getJfrFile();
+		File jfrFile = getNewJfrFile();
 		jfrFile.delete();
 
 		String[] newVmArgs = new String[vmArgs.length + 1];
@@ -99,8 +105,6 @@ public abstract class TestBase {
 	}
 
 	public String[] getJfrOutput(String idFilter, int stackDepth) throws IOException, InterruptedException {
-		File jfrFile = getJfrFile();
-
 		if (!jfrFile.exists()) {
 			throw new FileNotFoundException(jfrFile.getPath());
 		}
