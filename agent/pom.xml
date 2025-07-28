@@ -98,6 +98,12 @@
 	<!-- Profile for SapAgent -->
 	<profiles>
 		<profile>
+			<id>release</id>
+			<properties>
+				<changelist></changelist>
+			</properties>
+		</profile>
+		<profile>
 			<id>SapAgent</id>
 			<properties>
 				<agent.name>SapAgent</agent.name>
