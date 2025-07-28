@@ -160,7 +160,7 @@
 										<singleTest>${singleTest}</singleTest>
 									</systemPropertyVariables>
 									<argLine>
-									   -cp target/test-classes/
+									    -cp target/test-classes/
 									</argLine>
 									<includes>SapIntegrationTest.java</includes>
 								</configuration>
