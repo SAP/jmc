@@ -1,0 +1,48 @@
+<jfragent>
+    <config>
+        <classprefix>__JFREvent</classprefix>
+        <allowtostring>false</allowtostring>
+        <allowconverter>true</allowconverter>
+    </config>
+    <events>
+        <event id="jdk.log.timeZoneChanged">
+            <label>timeZoneChanged</label>
+            <description>Change of the default time zone</description>
+            <class>java.util.TimeZone</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <path>jdk/log/timeZone/changed</path>
+            <method>
+                <name>setDefault</name>
+                <descriptor>(Ljava/util/TimeZone;)V</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>newTimeZone</name>
+                        <description>The new default time zone</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZoneChange()V</converter>
+                    </parameter>
+                    <parameter index="0">
+                        <name>newTimeZoneId</name>
+                        <description>The new default time zone id</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZoneIdChange()V</converter>
+                    </parameter>
+                    <parameter index="0">
+                        <name>oldTimeZone</name>
+                        <description>The old default time zone</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZone()V</converter>
+                    </parameter>
+                    <parameter index="0">
+                        <name>oldTimeZoneId</name>
+                        <description>The old default time zone id</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.logDefaultTimeZoneId()V</converter>
+                    </parameter>
+                    <parameter index="0">
+                        <name>changesDefault</name>
+                        <description>Does this changes the default time zone, because it's not already the default</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.TimeZoneChangeLogger.changesDefaultTimeZone()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+        </event>
+    </events>
+</jfragent>

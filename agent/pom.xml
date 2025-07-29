@@ -93,7 +93,84 @@
 		<!-- Dependency Versions -->
 		<asm.version>9.8</asm.version>
 		<junit.version>4.13.2</junit.version>
+		<agent.name>Agent</agent.name>
 	</properties>
+	<!-- Profile for SapAgent -->
+	<profiles>
+		<profile>
+			<id>release</id>
+			<properties>
+				<changelist></changelist>
+			</properties>
+		</profile>
+		<profile>
+			<id>SapAgent</id>
+			<properties>
+				<agent.name>SapAgent</agent.name>
+				<revision>0.9.0</revision>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>${maven.jar.version}</version>
+						<executions>
+							<execution>
+								<id>boot-jar</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<classifier>boot</classifier>
+									<includes>
+										<include>org/openjdk/jmc/agent/sap/boot/**</include>
+									</includes>
+								</configuration>
+							</execution>
+							<execution>
+								<goals>
+									<goal>test-jar</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>org/openjdk/jmc/agent/sap/**</include>
+										<include>org/openjdk/jmc/agent/test/sap/**</include>
+									</includes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>${maven.failsafe.version}</version>
+						<executions>
+							<execution>
+								<id>test-sap-extensions</id>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+								<configuration>
+									<systemPropertyVariables>
+										<fullTest>${fullTest}</fullTest>
+										<dumpOutputToFile>${dumpOutputToFile}</dumpOutputToFile>
+										<debugPort>${debugPort}</debugPort>
+										<singleTest>${singleTest}</singleTest>
+									</systemPropertyVariables>
+									<argLine>
+									    -cp target/test-classes/
+									</argLine>
+									<includes>SapIntegrationTest.java</includes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<scm>
 		<connection>${scmConnection}</connection>
 	</scm>
@@ -174,6 +251,7 @@
 				<configuration>
 					<argLine>--add-opens java.base/jdk.internal.misc=ALL-UNNAMED -XX:+FlightRecorder</argLine>
 					<excludes>
+						<exclude>SapIntegrationTest.java</exclude>
 						<exclude>TestDefineEventProbes.java</exclude>
 						<exclude>TestCustomClassloader.java</exclude>
 						<exclude>TestPermissionChecks.java</exclude>
@@ -182,11 +260,6 @@
 						<exclude>TestRetrieveEventProbes.java</exclude>
 					</excludes>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -210,6 +283,7 @@
 							<excludes>
 								<exclude>module-info.class</exclude>
 								<exclude>META-INF/MANIFEST.MF</exclude>
+								<exclude>org/openjdk/jmc/agent/sap/boot/**</exclude>
 							</excludes>
 						</filter>
 					</filters>
@@ -217,8 +291,8 @@
 						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<manifestEntries>
 								<Automatic-Module-Name>org.openjdk.jmc.agent</Automatic-Module-Name>
-								<Agent-Class>org.openjdk.jmc.agent.Agent</Agent-Class>
-								<Premain-Class>org.openjdk.jmc.agent.Agent</Premain-Class>
+								<Agent-Class>org.openjdk.jmc.agent.${agent.name}</Agent-Class>
+								<Premain-Class>org.openjdk.jmc.agent.${agent.name}</Premain-Class>
 								<Can-Retransform-Classes>true</Can-Retransform-Classes>
 								<Bundle-RequiredExecutionEnvironment>JavaSE-17</Bundle-RequiredExecutionEnvironment>
 								<Built-By></Built-By>
@@ -383,6 +457,7 @@
 				<version>${spotless.version}</version>
 				<configuration>
 					<java>
+						<toggleOffOn />
 						<eclipse>
 							<file>${jmc.config.path}/ide/eclipse/formatting/formatting.xml</file>
 	 						<version>4.8.0</version>

@@ -1,0 +1,80 @@
+<jfragent>
+    <config>
+        <classprefix>__JFREvent</classprefix>
+        <allowtostring>false</allowtostring>
+        <allowconverter>true</allowconverter>
+    </config>
+    <events>
+        <event id="jdk.log.sysPropsChanged">
+            <label>sysPropsChanged</label>
+            <description>Change of system property</description>
+            <class>java.util.Properties</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <path>jdk/log/sysProps/changed</path>
+            <method>
+                <name>put</name>
+                <descriptor>(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>key</name>
+                        <description>The key</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logKey()V</converter>
+                    </parameter>
+                    <parameter index="1">
+                        <name>value</name>
+                        <description>The changed value</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logValue()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+            <fields>
+                <field>
+                    <name>oldValue</name>
+                    <expression>this</expression>
+                    <description>The old value</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logOldValue()V</converter>
+                </field>
+                <field>
+                    <name>isSystemProperty</name>
+                    <expression>this</expression>
+                    <description>Is this change for a System property</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logProperties()V</converter>
+                </field>
+            </fields>
+        </event>
+        <event id="jdk.log.sysPropsRemoved">
+            <label>sysPropsRemoved</label>
+            <description>Removing of system property</description>
+            <class>java.util.Properties</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <path>jdk/log/sysProps/changed</path>
+            <method>
+                <name>remove</name>
+                <descriptor>(Ljava/lang/Object;)Ljava/lang/Object;</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>key</name>
+                        <description>The key</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logKey()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+            <fields>
+                <field>
+                    <name>removedValue</name>
+                    <expression>this</expression>
+                    <description>The value of the removed property</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logOldValue()V</converter>
+                </field>
+                <field>
+                    <name>isSystemProperty</name>
+                    <expression>this</expression>
+                    <description>Is this change for a System property</description>
+                    <converter>org.openjdk.jmc.agent.sap.boot.converters.SystemPropChangeLogger.logProperties()V</converter>
+                </field>
+            </fields>
+        </event>
+    </events>
+</jfragent>

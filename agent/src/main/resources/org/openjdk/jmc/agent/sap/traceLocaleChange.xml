@@ -1,0 +1,43 @@
+<jfragent>
+    <config>
+        <classprefix>__JFREvent</classprefix>
+        <allowtostring>false</allowtostring>
+        <allowconverter>true</allowconverter>
+    </config>
+    <events>
+        <event id="jdk.log.localeChanged">
+            <label>localeChanged</label>
+            <description>Change of the default locale</description>
+            <class>java.util.Locale</class>
+            <stacktrace>true</stacktrace>
+            <rethrow>false</rethrow>
+            <path>jdk/log/locale/changed</path>
+            <method>
+                <name>setDefault</name>
+                <descriptor>(Ljava/util/Locale$Category;Ljava/util/Locale;)V</descriptor>
+                <parameters>
+                    <parameter index="0">
+                        <name>newCategory</name>
+                        <description>The category of the new locale</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.LocaleChangeLogger.logDefaultLocaleCategoryChange()V</converter>
+                    </parameter>
+                    <parameter index="0">
+                        <name>oldLocale</name>
+                        <description>The current locale for the category</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.LocaleChangeLogger.logDefaultLocale()V</converter>
+                    </parameter>
+                    <parameter index="1">
+                        <name>newLocale</name>
+                        <description>The new default locale</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.LocaleChangeLogger.logDefaultLocalChange()V</converter>
+                    </parameter>
+                    <parameter index="1">
+                        <name>hasLocaleChanged</name>
+                        <description>Has the locale for the category really changed</description>
+                        <converter>org.openjdk.jmc.agent.sap.boot.converters.LocaleChangeLogger.changesDefaultLocale()V</converter>
+                    </parameter>
+                </parameters>
+            </method>
+        </event>
+    </events>
+</jfragent>
