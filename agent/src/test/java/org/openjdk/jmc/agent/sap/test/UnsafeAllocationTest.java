@@ -105,7 +105,7 @@ public class UnsafeAllocationTest extends TestBase {
 
 	public void testNativeAllocs() throws IOException {
 		JavaAgentRunner runner = getRunner("traceUnsafeAllocations,logDest=stdout", "--add-opens",
-				"java.base/jdk.internal.misc=ALL-UNNAMED");
+				"java.base/jdk.internal.misc=ALL-UNNAMED", "-XX:NativeMemoryTracking=off");
 		runner.start(DO_NATIVE_ALLOCS);
 		runner.waitForDone();
 		runner.loadAgent("dump=unsafeAllocations,logDest=stderr,mustContain=doNativeAllocs");
@@ -129,7 +129,7 @@ public class UnsafeAllocationTest extends TestBase {
 				"Printed 1 of 2 allocations with 750 bytes");
 		runner.start(DO_NATIVE_ALLOCS);
 		runner.waitForDone();
-		runner.loadAgent("dump=unsafeAllocations,logDest=stderr,minAge=1");
+		runner.loadAgent("dump=unsafeAllocations,logDest=stderr,minAge=1m");
 		runner.kill();
 		assertLinesNotContainsRegExp(runner.getStderrLines(), "Allocated 570 bytes at", "Allocated 750 bytes at",
 				"Printed");
