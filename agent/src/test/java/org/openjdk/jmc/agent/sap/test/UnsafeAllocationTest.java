@@ -74,7 +74,7 @@ public class UnsafeAllocationTest extends TestBase {
 
 	public void testNativeAllocsForJfr() throws Exception {
 		JavaAgentRunner runner = getRunnerWithJFR("traceUnsafeAllocations", "--add-opens",
-				"java.base/jdk.internal.misc=ALL-UNNAMED");
+				"java.base/jdk.internal.misc=ALL-UNNAMED", "-XX:NativeMemoryTracking=off");
 		runner.start(DO_NATIVE_ALLOCS_FOR_JFR);
 		runner.waitForEnd();
 		String[] lines = getJfrOutput("jdk.log.*", 16);
