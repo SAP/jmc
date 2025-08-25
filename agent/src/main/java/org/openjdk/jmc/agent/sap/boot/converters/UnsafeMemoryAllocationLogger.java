@@ -56,8 +56,8 @@ public class UnsafeMemoryAllocationLogger {
 				MIN_SIZE, "The minimum size of the live allocations to dump the result.",
 				MIN_STACK_SIZE, "The minimum size of a stack to be included in a dump.",
 				MIN_PERCENTAGE, "The minimum percentage compared to the last dump to print a dump.",
-				MIN_AGE, "The minimum age in minutes to include an allocation in the output.",
-				MAX_AGE, "The maximum age in minutes to include an allocation in the output.",
+				MIN_AGE, "The minimum age to include an allocation in the output.",
+				MAX_AGE, "The maximum age to include an allocation in the output.",
 				MUST_CONTAIN, "A regexp which must match at least one frame to be printed.",
 				MUST_NOT_CONTAIN, "A regexp which must not match any frame to be printed.");
 		command = new Command(dumpCommand,

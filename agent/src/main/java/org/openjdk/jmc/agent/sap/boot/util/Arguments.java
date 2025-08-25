@@ -151,9 +151,9 @@ public class Arguments {
 		return defaultRersult;
 	}
 
-	private long parseUnits(String option, long defaultRersult, char[] suffixes, long[] scale) {
+	private long parseUnits(String option, long defaultResult, char[] suffixes, long[] scale) {
 		if (!args.containsKey(option)) {
-			return defaultRersult;
+			return defaultResult;
 		}
 
 		String rest = getString(option, "");
