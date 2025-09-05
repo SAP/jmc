@@ -74,7 +74,7 @@ jobs:
           echo GitHub Release Tag: $RELEASE_TAG
           echo "githubRelease=$(echo $RELEASE_TAG)" >> $GITHUB_OUTPUT
 
-          AGENT_REV=$(cd agent && grep -i \<revision\> pom.xml | sed 's/^[ \t]*<revision>//g;s/<\/revision>[ \t]*$//g')
+          AGENT_REV=$(cd agent && grep -i \<revision\> pom.xml | sed 's/^[ \t]*<revision>//g;s/<\/revision>[ \t]*$//g' | head -n 1)
           if [[ '${{ github.event.inputs.release || false }}' == true ]]; then
               AGENT_VERSION=${AGENT_REV}
           else
