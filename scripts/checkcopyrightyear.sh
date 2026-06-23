@@ -5,7 +5,7 @@ git remote -v | grep -w upstream || git remote add upstream https://github.com/o
 git fetch upstream
 
 CURRENT_YEAR=$(date +'%Y')
-COMMITTED_FILES=$(git diff --name-only --diff-filter=d upstream/master...HEAD)
+COMMITTED_FILES=$(git diff --name-only --diff-filter=d upstream/sap...HEAD)
 UNCOMMITTED_FILES=$(git diff --name-only --diff-filter=d)
 MODIFIED_FILES=$(echo -e "$COMMITTED_FILES\n$UNCOMMITTED_FILES" | sort -u | grep -v '^$')
 counter=0
@@ -26,13 +26,13 @@ do
 done
 if [ $counter -ne 0 ]
 then
-    # check if the PR branch is up-to-date with upstream/master
+    # check if the PR branch is up-to-date with upstream/sap
     # borrowed from: https://stackoverflow.com/a/39402294
-    if git merge-base --is-ancestor upstream/master @
+    if git merge-base --is-ancestor upstream/sap @
     then
         echo "Branch is up-to-date."
     else
-        echo "Branch is out of date with upstream/master. Please rebase your branch and try again."
+        echo "Branch is out of date with upstream/sap. Please rebase your branch and try again."
         exit 1
     fi
     echo "There is a total of $counter copyright year(s) that require updating."
