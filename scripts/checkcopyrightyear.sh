@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # set remote for upstream repository
-git remote -v | grep -w upstream || git remote add upstream https://github.com/openjdk/jmc.git
+git remote -v | grep -w upstream || git remote add upstream https://github.com/SAP/jmc.git
 git fetch upstream
 
 CURRENT_YEAR=$(date +'%Y')
