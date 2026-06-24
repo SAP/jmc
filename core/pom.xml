@@ -48,7 +48,7 @@
 	<inceptionYear>${project.inceptionYear}</inceptionYear>
 	<properties>
 		<!-- Config -->
-		<revision>9.1.1</revision>
+		<revision>9.1.2</revision>
 		<changelist>-SNAPSHOT</changelist>
 		<scmConnection>scm:git:git://github.com/openjdk/jmc.git</scmConnection>
 		<project.inceptionYear>2018</project.inceptionYear>
@@ -137,6 +137,26 @@
 			<modules>
 				<module>coverage</module>
 			</modules>
+		</profile>
+		<profile>
+			<id>skip-jdp-multicast-tests-on-mac</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<systemPropertyVariables>
+								<skipJDPMulticastTests>true</skipJDPMulticastTests>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 	<distributionManagement>
