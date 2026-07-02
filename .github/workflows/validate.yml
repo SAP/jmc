@@ -48,7 +48,7 @@ jobs:
        shell: bash
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
     - name : Check latest copyright year
@@ -68,7 +68,7 @@ jobs:
       MAVENPARAMS: --batch-mode --no-transfer-progress
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Set up Java 17
       uses: actions/setup-java@v4
       with:
