@@ -211,3 +211,30 @@ jobs:
           if [[ "$OVERALL_CONCLUSION" != "success" ]]; then
             exit 1
           fi
+
+      # Runs only when the workflow is cancelled — either superseded by the
+      # concurrency group (a new push/reopen for the same PR) or cancelled
+      # manually by a maintainer from the Actions UI. The poll step above is
+      # killed abruptly and never reaches its cleanup, so any statuses it left
+      # as 'pending' would otherwise block the PR forever. This step re-reads
+      # the current statuses on the head SHA and flips any that are still
+      # 'pending' to 'error'.
+      - name: 'Mark unfinished mirrored statuses as errored on cancellation'
+        if: cancelled()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          UPSTREAM_REPO: ${{ github.repository }}
+        run: |
+          echo "Run cancelled — marking any pending mirrored statuses as errored."
+          # The combined status endpoint returns the latest status per context.
+          gh api "repos/${UPSTREAM_REPO}/commits/${HEAD_SHA}/status" \
+            --jq '.statuses[] | select(.state == "pending") | .context' \
+            2>/dev/null | while IFS= read -r context; do
+            [[ -z "$context" ]] && continue
+            echo "  Marking cancelled: ${context}"
+            gh api -X POST "repos/${UPSTREAM_REPO}/statuses/${HEAD_SHA}" \
+              -f state="error" \
+              -f context="${context}" \
+              -f description="Mirror run was cancelled before this job completed." >/dev/null
+          done
