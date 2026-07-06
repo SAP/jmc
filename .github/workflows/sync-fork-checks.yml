@@ -69,8 +69,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
           FORK_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           UPSTREAM_REPO: ${{ github.repository }}
         run: |
@@ -114,22 +112,6 @@ jobs:
 
             if [[ -n "$RUN_ID" && "$RUN_ID" != "null" ]]; then
               echo "Found workflow run on fork: ${RUN_ID}"
-              break
-            fi
-
-            # Fallback: locate the latest "Validation" run on the PR head branch
-            # whose head SHA matches. The fork's Validation workflow runs on
-            # 'push', so this catches the case where the head_sha query misses.
-            RUN_ID=$(gh api \
-              "repos/${FORK_REPO}/actions/runs?branch=${HEAD_REF}&per_page=50" \
-              --jq '.workflow_runs[]
-                | select(.name == "Validation")
-                | select(.head_sha == "'"${HEAD_SHA}"'")
-                | .id' \
-              2>/dev/null | head -1)
-
-            if [[ -n "$RUN_ID" && "$RUN_ID" != "null" ]]; then
-              echo "Found workflow run on fork via branch fallback: ${RUN_ID}"
               break
             fi
 
