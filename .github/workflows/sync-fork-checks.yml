@@ -152,7 +152,7 @@ jobs:
               if [[ -z "${JOB_PENDING[$job_name]}" && -z "${JOB_DONE[$job_name]}" ]]; then
                 echo "  Pending status: ${job_name}"
                 post_status "${job_name}" "pending" \
-                  "Waiting for fork job to complete." "${job_url}"
+                  "Fork job in progress…" "${job_url}"
                 JOB_PENDING[$job_name]=1
               fi
 
