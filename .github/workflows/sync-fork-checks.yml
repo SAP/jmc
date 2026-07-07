@@ -152,7 +152,7 @@ jobs:
               if [[ -z "${JOB_PENDING[$job_name]}" && -z "${JOB_DONE[$job_name]}" ]]; then
                 echo "  Pending status: ${job_name}"
                 post_status "${job_name}" "pending" \
-                  "Waiting for fork job to complete." "${job_url}"
+                  "Fork job in progress…" "${job_url}"
                 JOB_PENDING[$job_name]=1
               fi
 
@@ -228,13 +228,16 @@ jobs:
         run: |
           echo "Run cancelled — marking any pending mirrored statuses as errored."
           # The combined status endpoint returns the latest status per context.
+          # Carry over each pending status's target_url so the "Details" link
+          # back to the fork job is preserved on the errored status.
           gh api "repos/${UPSTREAM_REPO}/commits/${HEAD_SHA}/status" \
-            --jq '.statuses[] | select(.state == "pending") | .context' \
-            2>/dev/null | while IFS= read -r context; do
+            --jq '.statuses[] | select(.state == "pending") | [.context, .target_url] | @tsv' \
+            2>/dev/null | while IFS=$'\t' read -r context url; do
             [[ -z "$context" ]] && continue
             echo "  Marking cancelled: ${context}"
             gh api -X POST "repos/${UPSTREAM_REPO}/statuses/${HEAD_SHA}" \
               -f state="error" \
               -f context="${context}" \
-              -f description="Mirror run was cancelled before this job completed." >/dev/null
+              -f description="Mirror run was cancelled before this job completed." \
+              -f target_url="${url}" >/dev/null
           done
