@@ -51,6 +51,7 @@
 		<jetty-maven-plugin.version>11.0.15</jetty-maven-plugin.version>
 		<maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
 		<!-- Versions -->
+		<condensed-data.version>0.1.3</condensed-data.version>
 		<jakarta.mail.version>2.0.5</jakarta.mail.version>
 		<angus.activation.version>2.0.3</angus.activation.version>
 		<jakarta.activation.version>2.1.4</jakarta.activation.version>
@@ -213,6 +214,21 @@
 										<Bundle-Name>radiance-animation</Bundle-Name>
 										<Bundle-SymbolicName>radiance-animation</Bundle-SymbolicName>
 										<Export-Package>org.pushingpixels.radiance.animation.api.*</Export-Package>
+									</instructions>
+								</artifact>
+								<artifact>
+									<!-- Use the -jmc classifier: writer classes excluded, JMC's
+									     flightrecorder.writer bundle supplies them at runtime.
+									     This avoids shaded-copy drift when JMC's writer evolves. -->
+									<id>me.bechberger:condensed-data:jar:jmc:${condensed-data.version}</id>
+									<transitive>false</transitive>
+									<source>false</source>
+									<override>true</override>
+									<instructions>
+										<Bundle-SymbolicName>me.bechberger.condensed.data</Bundle-SymbolicName>
+										<Bundle-Name>Condensed Data</Bundle-Name>
+										<Export-Package>me.bechberger.*</Export-Package>
+										<Import-Package>*;resolution:=optional</Import-Package>
 									</instructions>
 								</artifact>
 							</artifacts>
